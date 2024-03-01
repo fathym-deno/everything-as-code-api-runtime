@@ -1,0 +1,29 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "request": "launch",
+      "name": "Launch Program",
+      "type": "node",
+      "program": "${workspaceFolder}/main.ts",
+      "cwd": "${workspaceFolder}",
+      "runtimeExecutable": "deno.exe",
+      "runtimeArgs": ["run", "--config", "./deno.jsonc", "--inspect-wait"]
+    },
+    {
+      "request": "launch",
+      "name": "Test Program",
+      "type": "node",
+      "program": "${workspaceFolder}/tests/tests.ts",
+      "cwd": "${workspaceFolder}",
+      "runtimeExecutable": "deno.exe",
+      "runtimeArgs": [
+        "test",
+        "--config",
+        "./deno.jsonc",
+        "--inspect-wait"
+      ],
+      "attachSimplePort": 9229
+    }
+  ]
+}

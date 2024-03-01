@@ -1,0 +1,67 @@
+{
+  "lock": false,
+  "tasks": {
+    "build": "deno task build:fmt && deno task build:lint && deno task build:main",
+    "build:dev": "deno run -A dev.ts build",
+    "build:docker": "docker build --no-cache -t eac-runtime -f DOCKERFILE .",
+    "build:fmt": "deno fmt",
+    "build:lint": "deno lint",
+    "build:main": "deno run -A main.ts build",
+    "deploy": "deno task build && deno task test && npx ftm git",
+    "deploy:docker": "docker run -dp 127.0.0.1:3000:3000 eac-runtime",
+    "dev": "deno run -A --watch=configs/,data/,routes/,src/,static/ dev.ts",
+    "start": "deno run -A main.ts",
+    "test": "deno test -A tests/tests.ts --coverage=cov"
+  },
+  "imports": {
+    "@fathym/eac": "https://deno.land/x/fathym_everything_as_code@v0.0.369/mod.ts",
+    "@fathym/eac/runtime": "https://deno.land/x/fathym_eac_runtime@v0.0.140/mod.ts",
+    "@fathym/eac/runtime/": "https://deno.land/x/fathym_eac_runtime@v0.0.140/",
+    "preact": "https://esm.sh/preact@10.19.6",
+    "preact/": "https://esm.sh/preact@10.19.6/",
+    "preact-render-to-string": "https://esm.sh/*preact-render-to-string@6.4.0"
+  },
+  "exclude": [
+    "**/_eac-runtime/*"
+  ],
+  "lint": {
+    "include": [
+      "apps/",
+      "configs/",
+      "src/",
+      "tests/"
+    ],
+    "exclude": [],
+    "rules": {
+      "tags": [
+        "recommended"
+      ],
+      "include": [
+        "ban-untagged-todo"
+      ],
+      "exclude": []
+    }
+  },
+  "fmt": {
+    "include": [
+      "apps/",
+      "configs/",
+      "src/",
+      "tests/"
+    ],
+    "exclude": [],
+    "indentWidth": 2,
+    "lineWidth": 100,
+    "proseWrap": "preserve",
+    "semiColons": true,
+    "singleQuote": true,
+    "useTabs": false
+  },
+  "unstable": [
+    "kv"
+  ],
+  "compilerOptions": {
+    "jsx": "react-jsx",
+    "jsxImportSource": "preact"
+  }
+}
