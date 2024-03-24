@@ -1,5 +1,14 @@
-import { DefaultEaCConfig, defineEaCConfig, FathymDemoPlugin } from '@fathym/eac/runtime';
+import { DefaultEaCConfig, defineEaCConfig, EaCRuntime } from '@fathym/eac/runtime';
+import EaCAPIPlugin from '../src/plugins/EaCAPIPlugin.ts';
+import { listenForCommits } from '../api/handlers/index.ts';
 
-export default defineEaCConfig({
-  Plugins: [new FathymDemoPlugin(), ...(DefaultEaCConfig.Plugins || [])],
+export const config = defineEaCConfig({
+  Plugins: [new EaCAPIPlugin(), ...(DefaultEaCConfig.Plugins || [])],
+  Server: {
+    port: 6130,
+  },
 });
+
+export async function configure(rt: EaCRuntime): Promise<void> {
+  await listenForCommits(rt);
+}
