@@ -3,9 +3,8 @@ import {
   EaCSecretAsCode,
   EverythingAsCode,
   EverythingAsCodeClouds,
-  eacSetSecrets,
-  loadSecretClient,
 } from '@fathym/eac';
+import { eacSetSecrets, loadSecretClient } from '@fathym/eac/azure';
 import { EaCRuntimeContext, EaCRuntimeHandlers } from '@fathym/eac/runtime';
 import { EaCHandlerResponse } from '../../../../src/reqres/EaCHandlerResponse.ts';
 import { resolveDynamicValues } from '../../../../src/utils/eac/resolveDynamicValues.ts';

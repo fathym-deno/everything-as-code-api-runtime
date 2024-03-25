@@ -1,6 +1,7 @@
 import { STATUS_CODE } from '$std/http/status.ts';
 import { respond } from '@fathym/common';
-import { EverythingAsCode, enqueueAtomic } from '@fathym/eac';
+import { EverythingAsCode } from '@fathym/eac';
+import { enqueueAtomic } from '@fathym/eac/deno';
 import {
   EaCCommitRequest,
   EaCCommitResponse,

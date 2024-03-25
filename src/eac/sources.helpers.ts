@@ -1,14 +1,13 @@
 import * as base64 from '$std/encoding/base64.ts';
 import {
-  eacGetSecrets,
   EaCGitHubAppDetails,
   EaCSourceActionType,
   EaCSourceAsCode,
   EaCSourceConnectionAsCode,
   EverythingAsCode,
   EverythingAsCodeSources,
-  loadSecretClient,
 } from '@fathym/eac';
+import { eacGetSecrets, loadSecretClient } from '@fathym/eac/azure';
 import {
   configureRepository,
   ContentFile,

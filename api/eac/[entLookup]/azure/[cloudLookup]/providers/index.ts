@@ -1,9 +1,6 @@
 import { respond } from '@fathym/common';
-import {
-  EaCCloudAzureDetails,
-  EverythingAsCodeClouds,
-  loadAzureCloudCredentials,
-} from '@fathym/eac';
+import { EaCCloudAzureDetails, EverythingAsCodeClouds } from '@fathym/eac';
+import { loadAzureCloudCredentials } from '@fathym/eac/azure';
 import { EaCServiceDefinitions } from '@fathym/eac/api';
 import { EaCRuntimeContext, EaCRuntimeHandlers } from '@fathym/eac/runtime';
 import { Provider, ResourceManagementClient } from 'npm:@azure/arm-resources';

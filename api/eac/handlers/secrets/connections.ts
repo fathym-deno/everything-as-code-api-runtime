@@ -1,10 +1,6 @@
 import { respond } from '@fathym/common';
-import {
-  EaCSecretAsCode,
-  EverythingAsCode,
-  eacGetSecrets,
-  loadSecretClient,
-} from '@fathym/eac';
+import { EaCSecretAsCode, EverythingAsCode } from '@fathym/eac';
+import { eacGetSecrets, loadSecretClient } from '@fathym/eac/azure';
 import { EaCRuntimeContext, EaCRuntimeHandlers } from '@fathym/eac/runtime';
 import { EaCHandlerConnectionsResponse } from '../../../../src/reqres/EaCHandlerConnectionsResponse.ts';
 import { EaCHandlerConnectionsRequest } from '../../../../src/reqres/EaCHandlerConnectionsRequest.ts';

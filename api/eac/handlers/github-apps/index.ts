@@ -3,9 +3,11 @@ import {
   EaCGitHubAppAsCode,
   EaCGitHubAppDetails,
   EverythingAsCodeGitHub,
+} from '@fathym/eac';
+import {
   eacSetSecrets,
   loadSecretClient,
-} from '@fathym/eac';
+} from '@fathym/eac/azure';
 import { EaCRuntimeContext, EaCRuntimeHandlers } from '@fathym/eac/runtime';
 import { EaCAPIUserState } from '../../../../src/state/EaCAPIUserState.ts';
 import { EaCHandlerRequest } from '../../../../src/reqres/EaCHandlerRequest.ts';

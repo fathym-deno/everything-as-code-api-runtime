@@ -1,12 +1,14 @@
 import { merge } from '@fathym/common';
 import {
-  AtomicOperationHandler,
   EaCHandler,
   EaCMetadataBase,
-  enqueueAtomicOperation,
   EverythingAsCode,
-  listenQueueAtomic,
 } from '@fathym/eac';
+import {
+  AtomicOperationHandler,
+  enqueueAtomicOperation,
+  listenQueueAtomic,
+} from '@fathym/eac/deno';
 import {
   EaCCommitRequest,
   EaCStatus,

@@ -1,79 +1,80 @@
-import { EverythingAsCodeClouds, loadDataLakeClient } from '@fathym/eac';
+import { EverythingAsCodeClouds } from '@fathym/eac';
+import { loadDataLakeClient } from '@fathym/eac/azure';
 import { EaCRuntimeContext, EaCRuntimeHandlers } from '@fathym/eac/runtime';
-import { FileReadResponse } from "npm:@azure/storage-file-datalake";
-import { parse as json2csv } from "npm:json2csv";
+import { FileReadResponse } from 'npm:@azure/storage-file-datalake';
+import { parse as json2csv } from 'npm:json2csv';
 import { EaCAPIUserState } from '../../../../../../../../../src/state/EaCAPIUserState.ts';
 
 export const flattenJson = (function (isArray, wrapped) {
-    return function (table: any) {
-      return reduce("", {}, table);
-    };
-  
-    function reduce(
-      path: string,
-      accumulator: Record<string, unknown>,
-      table: any,
-    ) {
-      if (isArray(table)) {
-        const length = table.length;
-  
-        if (length) {
-          let index = 0;
-  
-          while (index < length) {
-            const property = path + "[" + index + "]";
-  
-            const item = table[index++];
-  
-            if (wrapped(item) !== item) {
-              accumulator[property] = item;
-            } else {
-              reduce(property, accumulator, item);
-            }
+  return function (table: any) {
+    return reduce('', {}, table);
+  };
+
+  function reduce(
+    path: string,
+    accumulator: Record<string, unknown>,
+    table: any
+  ) {
+    if (isArray(table)) {
+      const length = table.length;
+
+      if (length) {
+        let index = 0;
+
+        while (index < length) {
+          const property = path + '[' + index + ']';
+
+          const item = table[index++];
+
+          if (wrapped(item) !== item) {
+            accumulator[property] = item;
+          } else {
+            reduce(property, accumulator, item);
           }
-        } else {
-          accumulator[path] = table;
         }
       } else {
-        let empty = true;
-  
-        if (path) {
-          for (let property in table) {
-            const item: any = table[property];
-  
-            property = path + "." + property;
-  
-            empty = false;
-  
-            if (wrapped(item) !== item) {
-              accumulator[property] = item;
-            } else {
-              reduce(property, accumulator, item);
-            }
-          }
-        } else {
-          for (const property in table) {
-            const item = table[property];
-  
-            empty = false;
-  
-            if (wrapped(item) !== item) {
-              accumulator[property] = item;
-            } else {
-              reduce(property, accumulator, item);
-            }
+        accumulator[path] = table;
+      }
+    } else {
+      let empty = true;
+
+      if (path) {
+        for (let property in table) {
+          const item: any = table[property];
+
+          property = path + '.' + property;
+
+          empty = false;
+
+          if (wrapped(item) !== item) {
+            accumulator[property] = item;
+          } else {
+            reduce(property, accumulator, item);
           }
         }
-  
-        if (empty) {
-          accumulator[path] = table;
+      } else {
+        for (const property in table) {
+          const item = table[property];
+
+          empty = false;
+
+          if (wrapped(item) !== item) {
+            accumulator[property] = item;
+          } else {
+            reduce(property, accumulator, item);
+          }
         }
       }
-  
-      return accumulator;
+
+      if (empty) {
+        accumulator[path] = table;
+      }
     }
-  })(Array.isArray, Object);
-  
+
+    return accumulator;
+  }
+})(Array.isArray, Object);
+
 export default {
   async POST(req, ctx: EaCRuntimeContext<EaCAPIUserState>) {
     const entLookup = ctx.State.UserEaC!.EnterpriseLookup;
@@ -83,46 +84,46 @@ export default {
     const resGroupLookup = ctx.Params.resGroupLookup as string;
 
     const resLookups: string[] = decodeURIComponent(
-      ctx.Params.resLookups as string,
-    ).split("|");
+      ctx.Params.resLookups as string
+    ).split('|');
 
     const fileSystem = ctx.Params.fileSystem as string;
 
     const shortName = resGroupLookup
-      .split("-")
+      .split('-')
       .map((p) => p.charAt(0))
-      .join("");
+      .join('');
 
     const iotHubName = `${shortName}-iot-hub`;
 
     const url = new URL(req.url);
 
-    const svcSuffix = url.searchParams.get("svcSuffix") as string | undefined;
+    const svcSuffix = url.searchParams.get('svcSuffix') as string | undefined;
 
     const startTime = new Date(
       Date.parse(
-        url.searchParams.get("startTime") ||
-          new Date(Date.now() - 1000 * 60 * 60 * 24 * 7).toUTCString(),
-      ),
+        url.searchParams.get('startTime') ||
+          new Date(Date.now() - 1000 * 60 * 60 * 24 * 7).toUTCString()
+      )
     );
 
     const endTime = new Date(
       Date.parse(
-        url.searchParams.get("endTime") || new Date(Date.now()).toUTCString(),
-      ),
+        url.searchParams.get('endTime') || new Date(Date.now()).toUTCString()
+      )
     );
 
-    const resultType = url.searchParams.get("resultType") as
-      | "json"
-      | "csv"
-      | "jsonl";
+    const resultType = url.searchParams.get('resultType') as
+      | 'json'
+      | 'csv'
+      | 'jsonl';
 
     const flatten = JSON.parse(
-      url.searchParams.get("flatten") || "false",
+      url.searchParams.get('flatten') || 'false'
     ) as boolean;
 
     const download = JSON.parse(
-      url.searchParams.get("download") || "false",
+      url.searchParams.get('download') || 'false'
     ) as boolean;
 
     const dataLakeClient = await loadDataLakeClient(
@@ -132,15 +133,12 @@ export default {
       resLookups,
       async (entLookup) => {
         const eacKv = await ctx.Runtime.IoC.Resolve<Deno.Kv>(Deno.Kv, 'eac');
-    
-        const eac = await eacKv.get<EverythingAsCodeClouds>([
-          "EaC",
-          entLookup,
-        ]);
+
+        const eac = await eacKv.get<EverythingAsCodeClouds>(['EaC', entLookup]);
 
         return eac.value!;
       },
-      svcSuffix,
+      svcSuffix
     );
 
     const fileSystemClient = dataLakeClient.getFileSystemClient(fileSystem);
@@ -157,12 +155,11 @@ export default {
         for await (const fileSystemPath of fileSystemPaths) {
           // const pattern = new URLPattern({ pathname: '*' });
           const pattern = new URLPattern({
-            pathname:
-              `/${iotHubName}/:partition/:year/:month/:day/:hour/:minute.json`,
+            pathname: `/${iotHubName}/:partition/:year/:month/:day/:hour/:minute.json`,
           });
 
           const filePattern = pattern.exec(
-            `https://notused.com/${fileSystemPath.name!}`,
+            `https://notused.com/${fileSystemPath.name!}`
           );
 
           if (filePattern) {
@@ -175,8 +172,8 @@ export default {
                 Number.parseInt(month!) - 1,
                 Number.parseInt(day!),
                 Number.parseInt(hour!),
-                Number.parseInt(minute!),
-              ),
+                Number.parseInt(minute!)
+              )
             );
 
             if (
@@ -184,11 +181,11 @@ export default {
               fileTime.getTime() <= endTime.getTime()
             ) {
               const fileClient = fileSystemClient.getFileClient(
-                fileSystemPath.name!,
+                fileSystemPath.name!
               );
 
               if (
-                (resultType === "jsonl" || resultType === "json") &&
+                (resultType === 'jsonl' || resultType === 'json') &&
                 !flatten
               ) {
                 controller.enqueue(await fileClient.readToBuffer());
@@ -197,21 +194,21 @@ export default {
 
                 if (fileResp.readableStreamBody) {
                   const streamToBody = async (
-                    readableStream: NodeJS.ReadableStream,
+                    readableStream: NodeJS.ReadableStream
                   ) => {
                     return new Promise<void>((resolve, reject) => {
                       let buffer: number[] = [];
 
-                      readableStream.on("data", (data: Uint8Array) => {
+                      readableStream.on('data', (data: Uint8Array) => {
                         if (buffer.length > 0) {
                           buffer.push(...data);
                         }
 
                         const items = new TextDecoder()
                           .decode(
-                            buffer.length > 0 ? new Uint8Array(buffer) : data,
+                            buffer.length > 0 ? new Uint8Array(buffer) : data
                           )
-                          .split("\n");
+                          .split('\n');
 
                         buffer = [];
 
@@ -227,13 +224,13 @@ export default {
 
                         if (items.length > 0) {
                           items.forEach((item) => {
-                            if (item === "\r") {
+                            if (item === '\r') {
                               return;
                             }
-                            if (flatten || resultType === "csv") {
+                            if (flatten || resultType === 'csv') {
                               try {
                                 item = JSON.stringify(
-                                  flattenJson(JSON.parse(item)),
+                                  flattenJson(JSON.parse(item))
                                 );
                               } catch (err) {
                                 console.log(lastItem);
@@ -242,7 +239,7 @@ export default {
                               }
                             }
 
-                            if (resultType === "csv") {
+                            if (resultType === 'csv') {
                               item = json2csv([JSON.parse(item)], {
                                 expandNestedObjects: false,
                                 keys: [],
@@ -250,24 +247,24 @@ export default {
                               });
 
                               csvHeadersSent = true;
-                            } else if (resultType === "json") {
+                            } else if (resultType === 'json') {
                               // TODO(mcgear): Implement JSONPatch mechanism for JSON object constructionon the client?
                             }
 
                             console.log(item);
 
                             controller.enqueue(
-                              new TextEncoder().encode(`${item}\n`),
+                              new TextEncoder().encode(`${item}\n`)
                             );
                           });
                         }
                       });
 
-                      readableStream.on("end", () => {
+                      readableStream.on('end', () => {
                         resolve();
                       });
 
-                      readableStream.on("error", reject);
+                      readableStream.on('error', reject);
                     });
                   };
 
@@ -289,24 +286,24 @@ export default {
 
     if (download) {
       headers.set(
-        "Content-Disposition",
-        `attachment; filename=${startTime.toISOString()}-${endTime.toISOString()}.${resultType}`,
+        'Content-Disposition',
+        `attachment; filename=${startTime.toISOString()}-${endTime.toISOString()}.${resultType}`
       );
 
-      if (resultType === "csv") {
-        headers.set("Content-Type", "text/csv");
-      } else if (resultType === "json") {
-        headers.set("Content-Type", "application/json");
-      } else if (resultType === "jsonl") {
-        headers.set("Content-Type", "application/jsonl");
+      if (resultType === 'csv') {
+        headers.set('Content-Type', 'text/csv');
+      } else if (resultType === 'json') {
+        headers.set('Content-Type', 'application/json');
+      } else if (resultType === 'jsonl') {
+        headers.set('Content-Type', 'application/jsonl');
       }
     } else {
-      headers.set("Content-Disposition", "inline");
+      headers.set('Content-Disposition', 'inline');
 
-      headers.set("Content-Type", "text/plain");
+      headers.set('Content-Type', 'text/plain');
     }
 
-    headers.set("Cache-Control", "no-cache no-store");
+    headers.set('Cache-Control', 'no-cache no-store');
 
     return new Response(body, {
       headers: headers,

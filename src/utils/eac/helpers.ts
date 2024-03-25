@@ -1,11 +1,6 @@
 import { merge } from '@fathym/common';
-import {
-  EaCHandler,
-  EaCHandlers,
-  EaCMetadataBase,
-  EverythingAsCode,
-  hasKvEntry,
-} from '@fathym/eac';
+import { EaCHandler, EaCHandlers, EaCMetadataBase, EverythingAsCode } from '@fathym/eac';
+import { hasKvEntry } from '@fathym/eac/deno';
 import {
   EaCCommitRequest,
   EaCStatus,

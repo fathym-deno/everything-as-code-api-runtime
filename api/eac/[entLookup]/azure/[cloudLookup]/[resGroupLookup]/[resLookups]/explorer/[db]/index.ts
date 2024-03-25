@@ -1,5 +1,6 @@
 import { respond } from '@fathym/common';
-import { EverythingAsCodeClouds, loadKustoClient } from '@fathym/eac';
+import { EverythingAsCodeClouds } from '@fathym/eac';
+import { loadKustoClient } from '@fathym/eac/azure';
 import { ExplorerRequest } from '@fathym/eac/api';
 import { EaCRuntimeContext, EaCRuntimeHandlers } from '@fathym/eac/runtime';
 import { EaCAPIUserState } from '../../../../../../../../../src/state/EaCAPIUserState.ts';

@@ -1,10 +1,11 @@
 // deno-lint-ignore-file no-explicit-any
-import { EverythingAsCode, listenQueueAtomic } from '@fathym/eac';
+import { EverythingAsCode } from '@fathym/eac';
 import {
   EaCStatus,
   EaCStatusProcessingTypes,
   UserEaCRecord,
 } from '@fathym/eac/api';
+import { listenQueueAtomic } from '@fathym/eac/deno';
 import { EaCDeleteRequest } from '../../src/reqres/EaCDeleteRequest.ts';
 import {
   markEaCProcessed,

@@ -8,10 +8,12 @@ import {
   EaCCloudResourceGroupAsCode,
   EaCCloudResourceGroupDetails,
   EverythingAsCodeClouds,
+} from '@fathym/eac';
+import {
   loadAzureCloudCredentials,
   loadMainAzureCredentials,
   loadResoureTypeApiVersions,
-} from '@fathym/eac';
+} from '@fathym/eac/azure';
 import { BillingManagementClient } from 'npm:@azure/arm-billing';
 import {
   Deployment,

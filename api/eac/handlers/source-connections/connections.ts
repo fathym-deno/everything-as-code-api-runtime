@@ -5,13 +5,9 @@ import {
   EverythingAsCodeClouds,
   EverythingAsCodeGitHub,
   EverythingAsCodeSources,
-  eacGetSecrets,
-  loadSecretClient,
 } from '@fathym/eac';
-import {
-  SimpleUser,
-  loadOctokit,
-} from '@fathym/eac/octokit';
+import { eacGetSecrets, loadSecretClient } from '@fathym/eac/azure';
+import { SimpleUser, loadOctokit } from '@fathym/eac/octokit';
 import { EaCRuntimeContext, EaCRuntimeHandlers } from '@fathym/eac/runtime';
 import { EaCAPIUserState } from '../../../../src/state/EaCAPIUserState.ts';
 import { EaCHandlerConnectionsRequest } from '../../../../src/reqres/EaCHandlerConnectionsRequest.ts';

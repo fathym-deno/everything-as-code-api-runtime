@@ -1,5 +1,6 @@
 import { respond } from '@fathym/common';
-import { EverythingAsCodeClouds, loadAzureCloudCredentials } from '@fathym/eac';
+import { EverythingAsCodeClouds } from '@fathym/eac';
+import { loadAzureCloudCredentials } from '@fathym/eac/azure';
 import { EaCRuntimeContext, EaCRuntimeHandlers } from '@fathym/eac/runtime';
 import { EaCAPIUserState } from '../../../../../../src/state/EaCAPIUserState.ts';
 

@@ -1,5 +1,6 @@
 import { respond } from '@fathym/common';
-import { EaCCloudAsCode, deconstructCloudDetailsSecrets } from '@fathym/eac';
+import { EaCCloudAsCode } from '@fathym/eac';
+import { deconstructCloudDetailsSecrets } from '@fathym/eac/azure';
 import { EaCRuntimeContext, EaCRuntimeHandlers } from '@fathym/eac/runtime';
 import { EaCAPIUserState } from '../../../../src/state/EaCAPIUserState.ts';
 import { EaCHandlerConnectionsRequest } from '../../../../src/reqres/EaCHandlerConnectionsRequest.ts';
