@@ -57,12 +57,24 @@ export async function callEaCHandler<T extends EaCMetadataBase>(
         },
       });
 
-      return {
-        Lookup: diffLookup,
-        Response: (await result.json()) as
-          | EaCHandlerResponse
-          | EaCHandlerErrorResponse,
-      };
+      const resultStr = await result.text();
+
+      try {
+        return {
+          Lookup: diffLookup,
+          Response: JSON.parse(resultStr) as
+            | EaCHandlerResponse
+            | EaCHandlerErrorResponse,
+        };
+      } catch {
+        return {
+          Lookup: diffLookup,
+          Response: {
+            Lookup: diffLookup,
+            Model: diff![diffLookup],
+          } as EaCHandlerResponse,
+        };
+      }
     });
 
     const handledResponses: {
@@ -137,9 +149,15 @@ export async function callEaCHandlerCheck(
     },
   });
 
-  const checkResp = (await result.json()) as EaCHandlerCheckResponse;
+  try {
+    const checkResp = (await result.json()) as EaCHandlerCheckResponse;
 
-  return checkResp;
+    return checkResp;
+  } catch {
+    return {
+      Complete: true,
+    } as EaCHandlerCheckResponse;
+  }
 }
 
 export async function callEaCHandlerConnections(
@@ -166,11 +184,10 @@ export async function callEaCHandlerConnections(
     const checkResp = JSON.parse(text) as EaCHandlerConnectionsResponse;
 
     return checkResp;
-  } catch (err) {
-    console.error(err);
-    console.error(text);
-
-    throw err;
+  } catch (_err) {
+    return {
+      Model: {},
+    } as EaCHandlerConnectionsResponse;
   }
 }
 

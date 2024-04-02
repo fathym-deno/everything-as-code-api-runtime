@@ -1,6 +1,6 @@
 import * as base64 from '$std/encoding/base64.ts';
 import {
-  EaCGitHubAppDetails,
+  EaCGitHubAppProviderDetails,
   EaCSourceActionType,
   EaCSourceAsCode,
   EaCSourceConnectionAsCode,
@@ -20,14 +20,14 @@ import { Buffer } from 'node:buffer';
 import sodium from 'https://deno.land/x/sodium@0.2.0/basic.ts';
 
 export async function ensureSource(
-  gitHubAppDetails: EaCGitHubAppDetails,
+  providerDetails: EaCGitHubAppProviderDetails,
   connection: EaCSourceConnectionAsCode,
   sourceLookup: string,
   _currentSource: EaCSourceAsCode,
   source: EaCSourceAsCode,
   action?: EaCSourceActionType,
 ): Promise<EaCSourceAsCode> {
-  const octokit = await loadOctokit(gitHubAppDetails, connection.Details!);
+  const octokit = await loadOctokit(providerDetails, connection.Details!);
 
   let repository = await tryGetRepository(
     octokit,
@@ -98,13 +98,13 @@ export async function ensureSource(
 
 export async function ensureSourceArtifacts(
   eac: EverythingAsCodeSources & EverythingAsCode,
-  gitHubAppDetails: EaCGitHubAppDetails,
+  providerDetails: EaCGitHubAppProviderDetails,
   connection: EaCSourceConnectionAsCode,
   currentSource: EaCSourceAsCode,
   source: EaCSourceAsCode,
 ): Promise<EaCSourceAsCode> {
   if (source.SecretLookups) {
-    const octokit = await loadOctokit(gitHubAppDetails, connection.Details!);
+    const octokit = await loadOctokit(providerDetails, connection.Details!);
 
     const artifactLookups = Object.keys(source.Artifacts || {});
 
@@ -182,13 +182,13 @@ export async function ensureSourceArtifacts(
 
 export async function ensureSourceSecrets(
   eac: EverythingAsCode,
-  gitHubAppDetails: EaCGitHubAppDetails,
+  providerDetails: EaCGitHubAppProviderDetails,
   connection: EaCSourceConnectionAsCode,
   currentSource: EaCSourceAsCode,
   source: EaCSourceAsCode,
 ): Promise<EaCSourceAsCode> {
   if (source.SecretLookups) {
-    const octokit = await loadOctokit(gitHubAppDetails, connection.Details!);
+    const octokit = await loadOctokit(providerDetails, connection.Details!);
 
     const secretLookups = Object.keys(source.SecretLookups);
 

@@ -21,7 +21,7 @@ export default {
 
     const eac = await eacKv.get<EverythingAsCode>(['EaC', entLookup]);
 
-    return respond(eac.value || {});
+    return Response.json(eac.value);
   },
 
   async POST(req, ctx: EaCRuntimeContext<EaCAPIUserState>) {

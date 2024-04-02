@@ -21,38 +21,9 @@ export default {
       `Processing EaC commit ${handlerRequest.CommitID} GitHub App processes for app ${handlerRequest.Lookup}`
     );
 
-    const eac: EverythingAsCodeGitHub = handlerRequest.EaC;
-
-    const currentGitHubApps = eac.GitHubApps || {};
-
     const gitHubAppLookup = handlerRequest.Lookup;
 
-    const current = currentGitHubApps[gitHubAppLookup] || {};
-
     const gitHubApp = handlerRequest.Model as EaCGitHubAppAsCode;
-
-    const cloudLookup = gitHubApp.CloudLookup || current.CloudLookup!;
-
-    const keyVaultLookup = gitHubApp.KeyVaultLookup || current.KeyVaultLookup!;
-
-    const secretClient = await loadSecretClient(
-      eac,
-      cloudLookup,
-      keyVaultLookup
-    );
-
-    const secretRoot = `github-app-${gitHubAppLookup}`;
-
-    const secreted = await eacSetSecrets(secretClient, secretRoot, {
-      ClientSecret: gitHubApp.Details?.ClientSecret,
-      PrivateKey: gitHubApp.Details?.PrivateKey,
-      WebhooksSecret: gitHubApp.Details?.WebhooksSecret,
-    });
-
-    gitHubApp.Details = {
-      ...gitHubApp.Details,
-      ...secreted,
-    } as EaCGitHubAppDetails;
 
     return respond({
       Checks: [],

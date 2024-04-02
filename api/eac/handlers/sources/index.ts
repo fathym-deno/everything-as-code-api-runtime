@@ -2,10 +2,12 @@ import { delay } from '$std/async/delay.ts';
 import { respond } from '@fathym/common';
 import {
   EaCGitHubAppDetails,
+  EaCGitHubAppProviderDetails,
   EaCSourceActionType,
   EaCSourceAsCode,
   EverythingAsCode,
   EverythingAsCodeGitHub,
+  EverythingAsCodeIdentity,
   EverythingAsCodeSources,
 } from '@fathym/eac';
 import { eacGetSecrets, loadSecretClient } from '@fathym/eac/azure';
@@ -46,7 +48,8 @@ export default {
       let source = handlerRequest.Model as EaCSourceAsCode;
 
       if (source.Details || source.SourceLookups) {
-        const parentEaC: EverythingAsCodeGitHub = handlerRequest.ParentEaC!;
+        const parentEaC: EverythingAsCodeGitHub & EverythingAsCodeIdentity =
+          handlerRequest.ParentEaC!;
 
         const sourceConnection =
           eac.SourceConnections![
@@ -58,6 +61,11 @@ export default {
         const gitHubApp =
           parentEaC.GitHubApps![sourceConnection.GitHubAppLookup!];
 
+        const provider =
+          parentEaC.Providers![gitHubApp.Details!.ProviderLookup];
+
+        const details = provider.Details! as EaCGitHubAppProviderDetails;
+
         const secretClient = await loadSecretClient(
           parentEaC,
           gitHubApp.CloudLookup!,
@@ -65,19 +73,19 @@ export default {
         );
 
         const secreted = await eacGetSecrets(secretClient, {
-          ClientSecret: gitHubApp.Details?.ClientSecret!,
-          PrivateKey: gitHubApp.Details?.PrivateKey!,
-          WebhooksSecret: gitHubApp.Details?.WebhooksSecret!,
+          ClientSecret: details.ClientSecret!,
+          PrivateKey: details.PrivateKey!,
+          WebhooksSecret: details.WebhooksSecret!,
         });
 
-        const gitHubAppDetails = {
-          ...gitHubApp.Details,
+        const providerDetails = {
+          ...details,
           ...secreted,
-        } as EaCGitHubAppDetails;
+        } as EaCGitHubAppProviderDetails;
 
         if (source.Details) {
           source = await ensureSource(
-            gitHubAppDetails,
+            providerDetails,
             sourceConnection,
             sourceLookup,
             current,
@@ -96,7 +104,7 @@ export default {
 
         await ensureSourceSecrets(
           eac,
-          gitHubAppDetails,
+          providerDetails,
           sourceConnection,
           current,
           source
@@ -106,7 +114,7 @@ export default {
 
         await ensureSourceArtifacts(
           eac,
-          gitHubAppDetails,
+          providerDetails,
           sourceConnection,
           current,
           source

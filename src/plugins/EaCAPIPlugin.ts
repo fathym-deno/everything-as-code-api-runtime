@@ -5,7 +5,12 @@ import {
   EaCKeepAliveModifierDetails,
   EaCLocalDistributedFileSystem,
 } from '@fathym/eac';
-import { EaCRuntimeConfig, EaCRuntimePlugin, EaCRuntimePluginConfig } from '@fathym/eac/runtime';
+import {
+  EaCRuntimeConfig,
+  EaCRuntimePlugin,
+  EaCRuntimePluginConfig,
+  FathymAzureContainerCheckPlugin,
+} from '@fathym/eac/runtime';
 
 export default class EaCAPIPlugin implements EaCRuntimePlugin {
   constructor() {}
@@ -14,6 +19,7 @@ export default class EaCAPIPlugin implements EaCRuntimePlugin {
     console.log(config);
     const pluginConfig: EaCRuntimePluginConfig = {
       Name: 'EaCAPIPlugin',
+      Plugins: [new FathymAzureContainerCheckPlugin()],
       EaC: {
         Projects: {
           api: {

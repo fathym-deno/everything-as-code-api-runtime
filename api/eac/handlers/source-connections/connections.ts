@@ -1,9 +1,11 @@
 import { respond } from '@fathym/common';
 import {
   EaCGitHubAppDetails,
+  EaCGitHubAppProviderDetails,
   EaCSourceConnectionAsCode,
   EverythingAsCodeClouds,
   EverythingAsCodeGitHub,
+  EverythingAsCodeIdentity,
   EverythingAsCodeSources,
 } from '@fathym/eac';
 import { eacGetSecrets, loadSecretClient } from '@fathym/eac/azure';
@@ -20,7 +22,8 @@ export default {
     const eac: EverythingAsCodeSources & EverythingAsCodeClouds =
       handlerRequest.EaC;
 
-    const parentEaC: EverythingAsCodeGitHub = handlerRequest.ParentEaC!;
+    const parentEaC: EverythingAsCodeIdentity & EverythingAsCodeGitHub =
+      handlerRequest.ParentEaC!;
 
     const sourceConnDef = handlerRequest.Model as EaCSourceConnectionAsCode;
 
@@ -28,22 +31,26 @@ export default {
 
     const gitHubApp = parentEaC.GitHubApps![sourceConn.GitHubAppLookup!];
 
+    const provider = parentEaC.Providers![gitHubApp.Details!.ProviderLookup];
+
     const secretClient = await loadSecretClient(
       parentEaC,
       gitHubApp.CloudLookup!,
       gitHubApp.KeyVaultLookup!
     );
 
+    const details = provider.Details as EaCGitHubAppProviderDetails;
+
     const secreted = await eacGetSecrets(secretClient, {
-      ClientSecret: gitHubApp.Details?.ClientSecret!,
-      PrivateKey: gitHubApp.Details?.PrivateKey!,
-      WebhooksSecret: gitHubApp.Details?.WebhooksSecret!,
+      ClientSecret: details?.ClientSecret!,
+      PrivateKey: details?.PrivateKey!,
+      WebhooksSecret: details?.WebhooksSecret!,
     });
 
-    const gitHubAppDetails = {
-      ...gitHubApp.Details,
+    const providerDetails = {
+      ...details,
       ...secreted,
-    } as EaCGitHubAppDetails;
+    } as EaCGitHubAppProviderDetails;
 
     const organizationLookups = Object.keys(sourceConnDef.Organizations || {});
 
@@ -76,7 +83,7 @@ export default {
     }`;
 
     try {
-      const octokit = await loadOctokit(gitHubAppDetails, sourceConn.Details!);
+      const octokit = await loadOctokit(providerDetails, gitHubApp.Details!, sourceConn.Details!);
 
       const installs =
         await octokit.rest.apps.listInstallationsForAuthenticatedUser();
