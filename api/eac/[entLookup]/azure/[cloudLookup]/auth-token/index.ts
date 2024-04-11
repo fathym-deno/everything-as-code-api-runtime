@@ -5,7 +5,7 @@ import { EaCRuntimeContext, EaCRuntimeHandlers } from '@fathym/eac/runtime';
 import { EaCAPIUserState } from '../../../../../../src/state/EaCAPIUserState.ts';
 
 export default {
-  async POST(req, ctx: EaCRuntimeContext<EaCAPIUserState>) {
+  async GET(req, ctx: EaCRuntimeContext<EaCAPIUserState>) {
     const entLookup = ctx.State.UserEaC!.EnterpriseLookup;
 
     const cloudLookup = ctx.Params.cloudLookup as string;
