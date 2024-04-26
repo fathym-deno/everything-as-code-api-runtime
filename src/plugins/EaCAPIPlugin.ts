@@ -40,6 +40,9 @@ export default class EaCAPIPlugin implements EaCRuntimePlugin {
               eacApi: {
                 Hostname: 'eac-api.fathym.com',
               },
+              eacApiAzure: {
+                Hostname: 'everything-as-code-api-runtime.azurewebsites.net',
+              },
             },
             ModifierResolvers: {
               keepAlive: {
