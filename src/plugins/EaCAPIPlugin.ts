@@ -54,6 +54,10 @@ export default class EaCAPIPlugin implements EaCRuntimePlugin {
                 PathPattern: '/api/eac*',
                 Priority: 100,
               },
+              azureContainerCheck: {
+                PathPattern: '*',
+                Priority: 100,
+              },
             },
           },
         },
