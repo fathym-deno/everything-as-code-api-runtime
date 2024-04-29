@@ -31,7 +31,7 @@
 //     .atomic()
 //     .set(['User', username, 'EaC', eac.EnterpriseLookup!], userEaCRecord)
 //     .set(['EaC', 'Users', eac.EnterpriseLookup!, username], userEaCRecord)
-//     .set(['EaC', eac.EnterpriseLookup!], eac)
+//     .set(['EaC', 'Current', eac.EnterpriseLookup!], eac)
 //     .commit();
 
 //   console.log('Fathym Core Enterprise Lookup:');

@@ -19,7 +19,11 @@ export default {
 
     const eacKv = await ctx.Runtime.IoC.Resolve<Deno.Kv>(Deno.Kv, 'eac');
 
-    const eac = await eacKv.get<EverythingAsCode>(['EaC', entLookup]);
+    const eac = await eacKv.get<EverythingAsCode>([
+      'EaC',
+      'Current',
+      entLookup,
+    ]);
 
     return Response.json(eac.value);
   },
@@ -88,23 +92,28 @@ export default {
 
     const commitKv = await ctx.Runtime.IoC.Resolve<Deno.Kv>(Deno.Kv, 'commit');
 
-    await enqueueAtomic(commitKv, commitReq, (op) => {
-      return op
-        .set(
-          [
-            'EaC',
-            'Status',
-            commitStatus.EnterpriseLookup,
-            'ID',
-            commitStatus.ID,
-          ],
-          commitStatus
-        )
-        .set(
-          ['EaC', 'Status', commitStatus.EnterpriseLookup, 'EaC'],
-          commitStatus
-        );
-    });
+    await enqueueAtomic(
+      commitKv,
+      commitReq,
+      (op) => {
+        return op
+          .set(
+            [
+              'EaC',
+              'Status',
+              commitStatus.EnterpriseLookup,
+              'ID',
+              commitStatus.ID,
+            ],
+            commitStatus
+          )
+          .set(
+            ['EaC', 'Status', commitStatus.EnterpriseLookup, 'EaC'],
+            commitStatus
+          );
+      },
+      eacKv
+    );
 
     console.log(
       `EaC container update for ${eac.EnterpriseLookup} queued with Commit ID ${commitStatus.ID}.`
@@ -181,23 +190,28 @@ export default {
 
     const commitKv = await ctx.Runtime.IoC.Resolve<Deno.Kv>(Deno.Kv, 'commit');
 
-    await enqueueAtomic(commitKv, deleteReq, (op) => {
-      return op
-        .set(
-          [
-            'EaC',
-            'Status',
-            commitStatus.EnterpriseLookup,
-            'ID',
-            commitStatus.ID,
-          ],
-          commitStatus
-        )
-        .set(
-          ['EaC', 'Status', commitStatus.EnterpriseLookup, 'EaC'],
-          commitStatus
-        );
-    });
+    await enqueueAtomic(
+      commitKv,
+      deleteReq,
+      (op) => {
+        return op
+          .set(
+            [
+              'EaC',
+              'Status',
+              commitStatus.EnterpriseLookup,
+              'ID',
+              commitStatus.ID,
+            ],
+            commitStatus
+          )
+          .set(
+            ['EaC', 'Status', commitStatus.EnterpriseLookup, 'EaC'],
+            commitStatus
+          );
+      },
+      eacKv
+    );
 
     return respond({
       CommitID: commitStatus.ID,

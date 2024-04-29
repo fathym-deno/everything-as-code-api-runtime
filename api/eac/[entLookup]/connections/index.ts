@@ -12,7 +12,11 @@ export default {
 
     const eacKv = await ctx.Runtime.IoC.Resolve<Deno.Kv>(Deno.Kv, 'eac');
 
-    const eac = await eacKv.get<EverythingAsCode>(['EaC', entLookup]);
+    const eac = await eacKv.get<EverythingAsCode>([
+      'EaC',
+      'Current',
+      entLookup,
+    ]);
 
     const eacConnections = {} as EverythingAsCode;
 

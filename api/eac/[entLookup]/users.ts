@@ -55,7 +55,11 @@ export default {
 
     const eacKv = await ctx.Runtime.IoC.Resolve<Deno.Kv>(Deno.Kv, 'eac');
 
-    const existingEaC = await eacKv.get<EverythingAsCode>(['EaC', entLookup]);
+    const existingEaC = await eacKv.get<EverythingAsCode>([
+      'EaC',
+      'Current',
+      entLookup,
+    ]);
 
     if (!existingEaC.value) {
       return respond(

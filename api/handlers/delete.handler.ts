@@ -13,12 +13,13 @@ import {
 } from '../../src/utils/eac/helpers.ts';
 
 export async function handleEaCDeleteRequest(
-  denoKv: Deno.Kv,
+  eacKv: Deno.Kv,
+  commitKv: Deno.Kv,
   deleteReq: EaCDeleteRequest
 ) {
   console.log(`Processing EaC delete for ${deleteReq.CommitID}`);
 
-  const status = await denoKv.get<EaCStatus>([
+  const status = await eacKv.get<EaCStatus>([
     'EaC',
     'Status',
     deleteReq.EaC.EnterpriseLookup!,
@@ -26,21 +27,24 @@ export async function handleEaCDeleteRequest(
     deleteReq.CommitID,
   ]);
 
-  await waitOnEaCProcessing(
-    denoKv,
+  await waitOnEaCProcessing<EaCDeleteRequest>(
+    eacKv,
     status.value!.EnterpriseLookup,
     status.value!.ID,
     deleteReq,
-    handleEaCDeleteRequest,
+    () => {
+      return handleEaCDeleteRequest(eacKv, commitKv, deleteReq);
+    },
     deleteReq.ProcessingSeconds
   );
 
-  const eac = await denoKv.get<EverythingAsCode>([
+  const eac = await eacKv.get<EverythingAsCode>([
     'EaC',
+    'Current',
     deleteReq.EaC.EnterpriseLookup!,
   ]);
 
-  const userEaCResults = await denoKv.list<UserEaCRecord>({
+  const userEaCResults = await eacKv.list<UserEaCRecord>({
     prefix: ['EaC', 'Users', deleteReq.EaC.EnterpriseLookup!],
   });
 
@@ -87,69 +91,77 @@ export async function handleEaCDeleteRequest(
   console.log(`Processed EaC delete for ${deleteReq.CommitID}:`);
   console.log(status.value!);
 
-  await listenQueueAtomic(denoKv, deleteReq, (op) => {
-    op = markEaCProcessed(deleteReq.EaC.EnterpriseLookup!, op)
-      .check(eac)
-      .check(status)
-      .set(
-        [
-          'EaC',
-          'Status',
-          deleteReq.EaC.EnterpriseLookup!,
-          'ID',
-          deleteReq.CommitID,
-        ],
-        status.value
-      );
+  await listenQueueAtomic(
+    commitKv,
+    deleteReq,
+    (op) => {
+      op = markEaCProcessed(deleteReq.EaC.EnterpriseLookup!, op)
+        .check(eac)
+        .check(status)
+        .set(
+          [
+            'EaC',
+            'Status',
+            deleteReq.EaC.EnterpriseLookup!,
+            'ID',
+            deleteReq.CommitID,
+          ],
+          status.value
+        );
 
-    if (deleteReq.Archive) {
-      op = op
-        .set(['EaC', 'Archive', deleteReq.EaC.EnterpriseLookup!], eac.value)
-        .delete(['EaC', deleteReq.EaC.EnterpriseLookup!]);
-
-      for (const userEaCRecord of userEaCRecords) {
+      if (deleteReq.Archive) {
         op = op
-          .delete([
-            'EaC',
-            'Users',
-            deleteReq.EaC.EnterpriseLookup!,
-            userEaCRecord.Username,
-          ])
-          .delete([
-            'User',
-            userEaCRecord.Username,
-            'EaC',
-            deleteReq.EaC.EnterpriseLookup!,
-          ]);
+          .set(['EaC', 'Archive', deleteReq.EaC.EnterpriseLookup!], eac.value)
+          .delete(['EaC', 'Current', deleteReq.EaC.EnterpriseLookup!]);
 
-        if (userEaCRecord.Owner) {
+        for (const userEaCRecord of userEaCRecords) {
           op = op
-            .set(
-              [
-                'EaC',
-                'Archive',
-                'Users',
-                deleteReq.EaC.EnterpriseLookup!,
-                userEaCRecord.Username,
-              ],
-              userEaCRecord
-            )
-            .set(
-              [
-                'User',
-                userEaCRecord.Username,
-                'Archive',
-                'EaC',
-                deleteReq.EaC.EnterpriseLookup!,
-              ],
-              userEaCRecord
-            );
-        }
-      }
-    } else {
-      op = op.set(['EaC', deleteReq.EaC.EnterpriseLookup!], eac.value);
-    }
+            .delete([
+              'EaC',
+              'Users',
+              deleteReq.EaC.EnterpriseLookup!,
+              userEaCRecord.Username,
+            ])
+            .delete([
+              'User',
+              userEaCRecord.Username,
+              'EaC',
+              deleteReq.EaC.EnterpriseLookup!,
+            ]);
 
-    return op;
-  });
+          if (userEaCRecord.Owner) {
+            op = op
+              .set(
+                [
+                  'EaC',
+                  'Archive',
+                  'Users',
+                  deleteReq.EaC.EnterpriseLookup!,
+                  userEaCRecord.Username,
+                ],
+                userEaCRecord
+              )
+              .set(
+                [
+                  'User',
+                  userEaCRecord.Username,
+                  'Archive',
+                  'EaC',
+                  deleteReq.EaC.EnterpriseLookup!,
+                ],
+                userEaCRecord
+              );
+          }
+        }
+      } else {
+        op = op.set(
+          ['EaC', 'Current', deleteReq.EaC.EnterpriseLookup!],
+          eac.value
+        );
+      }
+
+      return op;
+    },
+    eacKv
+  );
 }

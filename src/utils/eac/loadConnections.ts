@@ -15,7 +15,11 @@ export async function loadConnections(
       Lookup: lookup,
       Result: await callEaCHandlerConnections(
         async (entLookup) => {
-          const eac = await denoKv.get<EverythingAsCode>(['EaC', entLookup]);
+          const eac = await denoKv.get<EverythingAsCode>([
+            'EaC',
+            'Current',
+            entLookup,
+          ]);
 
           return eac.value!;
         },

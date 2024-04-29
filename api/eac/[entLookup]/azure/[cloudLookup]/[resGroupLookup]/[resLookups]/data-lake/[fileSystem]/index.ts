@@ -134,7 +134,11 @@ export default {
       async (entLookup) => {
         const eacKv = await ctx.Runtime.IoC.Resolve<Deno.Kv>(Deno.Kv, 'eac');
 
-        const eac = await eacKv.get<EverythingAsCodeClouds>(['EaC', entLookup]);
+        const eac = await eacKv.get<EverythingAsCodeClouds>([
+          'EaC',
+          'Current',
+          entLookup,
+        ]);
 
         return eac.value!;
       },

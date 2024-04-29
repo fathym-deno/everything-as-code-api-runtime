@@ -1,11 +1,6 @@
 import { merge } from '@fathym/common';
-import {
-  EverythingAsCode,
-} from '@fathym/eac';
-import {
-  enqueueAtomicOperation,
-  listenQueueAtomic,
-} from '@fathym/eac/deno';
+import { EverythingAsCode } from '@fathym/eac';
+import { enqueueAtomicOperation, listenQueueAtomic } from '@fathym/eac/deno';
 import {
   EaCCommitRequest,
   EaCStatus,
@@ -20,7 +15,8 @@ import {
 } from '../../src/utils/eac/helpers.ts';
 
 export async function handleEaCCommitCheckRequest(
-  denoKv: Deno.Kv,
+  eacKv: Deno.Kv,
+  commitKv: Deno.Kv,
   commitCheckReq: EaCCommitCheckRequest
 ) {
   console.log(`Processing EaC commit check for ${commitCheckReq.CommitID}`);
@@ -36,7 +32,7 @@ export async function handleEaCCommitCheckRequest(
     commitCheckReq.CommitID,
   ];
 
-  const status = await denoKv.get<EaCStatus>(statusKey);
+  const status = await eacKv.get<EaCStatus>(statusKey);
 
   const errors: EaCHandlerErrorResponse[] = [];
 
@@ -48,7 +44,11 @@ export async function handleEaCCommitCheckRequest(
     commitCheckReq.Checks.map(async (check) => {
       const checkResp = await callEaCHandlerCheck(
         async (entLookup) => {
-          const eac = await denoKv.get<EverythingAsCode>(['EaC', entLookup]);
+          const eac = await eacKv.get<EverythingAsCode>([
+            'EaC',
+            'Current',
+            entLookup,
+          ]);
 
           return eac.value!;
         },
@@ -62,7 +62,7 @@ export async function handleEaCCommitCheckRequest(
         checkResp.Messages
       );
 
-      await denoKv.set(statusKey, status.value!);
+      await eacKv.set(statusKey, status.value!);
 
       if (checkResp.HasError) {
         errors.push({
@@ -95,81 +95,86 @@ export async function handleEaCCommitCheckRequest(
     status.value!.EndTime = new Date();
   }
 
-  await listenQueueAtomic(denoKv, commitCheckReq, (op) => {
-    op = op
-      .set(
-        [
-          'EaC',
-          'Status',
-          commitCheckReq.EaC.EnterpriseLookup!,
-          'ID',
-          commitCheckReq.CommitID,
-        ],
-        status.value
-      )
-      .set(
-        ['EaC', 'Status', commitCheckReq.EaC.EnterpriseLookup!, 'EaC'],
-        status.value
-      );
+  await listenQueueAtomic(
+    commitKv,
+    commitCheckReq,
+    (op) => {
+      op = op
+        .set(
+          [
+            'EaC',
+            'Status',
+            commitCheckReq.EaC.EnterpriseLookup!,
+            'ID',
+            commitCheckReq.CommitID,
+          ],
+          status.value
+        )
+        .set(
+          ['EaC', 'Status', commitCheckReq.EaC.EnterpriseLookup!, 'EaC'],
+          status.value
+        );
 
-    if (allChecks.length > 0) {
-      const newCommitCheckReq: EaCCommitCheckRequest = {
-        ...commitCheckReq,
-        Checks: allChecks,
-        nonce: undefined,
-        versionstamp: undefined,
-      };
-
-      op = enqueueAtomicOperation(op, newCommitCheckReq, 1000 * 10);
-
-      console.log(`Requeuing EaC commit ${commitCheckReq.CommitID} checks`);
-    } else if (errors.length > 0) {
-      op = markEaCProcessed(EnterpriseLookup!, op);
-
-      console.log(
-        `Processed EaC commit ${commitCheckReq.CommitID}, from checks, with errors`
-      );
-      console.log(errors);
-    } else {
-      let saveEaC = { ...commitCheckReq.EaC };
-
-      const toProcessEaC: EverythingAsCode = {
-        EnterpriseLookup,
-      };
-
-      if (commitCheckReq.ToProcessKeys.length > 0) {
-        commitCheckReq.ToProcessKeys.forEach((tpk) => {
-          toProcessEaC[tpk] = saveEaC[tpk];
-
-          delete saveEaC[tpk];
-        });
-
-        saveEaC = merge(commitCheckReq.OriginalEaC, saveEaC);
-
-        const commitReq: EaCCommitRequest = {
-          CommitID: commitCheckReq.CommitID,
-          EaC: toProcessEaC,
-          JWT: commitCheckReq.JWT,
-          ProcessingSeconds: commitCheckReq.ProcessingSeconds,
-          Username: commitCheckReq.Username,
+      if (allChecks.length > 0) {
+        const newCommitCheckReq: EaCCommitCheckRequest = {
+          ...commitCheckReq,
+          Checks: allChecks,
+          nonce: undefined,
+          versionstamp: undefined,
         };
 
-        op = enqueueAtomicOperation(op, commitReq);
+        op = enqueueAtomicOperation(op, newCommitCheckReq, 1000 * 10);
 
-        console.log(
-          `Completed processing checks for commit ${
-            commitCheckReq.CommitID
-          }, requeued with keys ${commitCheckReq.ToProcessKeys.join(',')} `
-        );
-      } else {
+        console.log(`Requeuing EaC commit ${commitCheckReq.CommitID} checks`);
+      } else if (errors.length > 0) {
         op = markEaCProcessed(EnterpriseLookup!, op);
 
-        console.log(`Processed EaC commit ${commitCheckReq.CommitID}`);
+        console.log(
+          `Processed EaC commit ${commitCheckReq.CommitID}, from checks, with errors`
+        );
+        console.log(errors);
+      } else {
+        let saveEaC = { ...commitCheckReq.EaC };
+
+        const toProcessEaC: EverythingAsCode = {
+          EnterpriseLookup,
+        };
+
+        if (commitCheckReq.ToProcessKeys.length > 0) {
+          commitCheckReq.ToProcessKeys.forEach((tpk) => {
+            toProcessEaC[tpk] = saveEaC[tpk];
+
+            delete saveEaC[tpk];
+          });
+
+          saveEaC = merge(commitCheckReq.OriginalEaC, saveEaC);
+
+          const commitReq: EaCCommitRequest = {
+            CommitID: commitCheckReq.CommitID,
+            EaC: toProcessEaC,
+            JWT: commitCheckReq.JWT,
+            ProcessingSeconds: commitCheckReq.ProcessingSeconds,
+            Username: commitCheckReq.Username,
+          };
+
+          op = enqueueAtomicOperation(op, commitReq);
+
+          console.log(
+            `Completed processing checks for commit ${
+              commitCheckReq.CommitID
+            }, requeued with keys ${commitCheckReq.ToProcessKeys.join(',')} `
+          );
+        } else {
+          op = markEaCProcessed(EnterpriseLookup!, op);
+
+          console.log(`Processed EaC commit ${commitCheckReq.CommitID}`);
+        }
+
+        op = op.set(['EaC', 'Current', EnterpriseLookup!], saveEaC);
       }
 
-      op = op.set(['EaC', EnterpriseLookup!], saveEaC);
-    }
-
-    return op;
-  });
+      return op;
+    },
+    eacKv
+  );
 }

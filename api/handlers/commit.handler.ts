@@ -1,9 +1,5 @@
 import { merge } from '@fathym/common';
-import {
-  EaCHandler,
-  EaCMetadataBase,
-  EverythingAsCode,
-} from '@fathym/eac';
+import { EaCHandler, EaCMetadataBase, EverythingAsCode } from '@fathym/eac';
 import {
   AtomicOperationHandler,
   enqueueAtomicOperation,
@@ -26,7 +22,8 @@ import {
 } from '../../src/utils/eac/helpers.ts';
 
 export async function handleEaCCommitRequest(
-  denoKv: Deno.Kv,
+  eacKv: Deno.Kv,
+  commitKv: Deno.Kv,
   commitReq: EaCCommitRequest
 ) {
   console.log(`Processing EaC commit for ${commitReq.CommitID}`);
@@ -50,19 +47,22 @@ export async function handleEaCCommitRequest(
     commitReq.CommitID,
   ];
 
-  let status = await denoKv.get<EaCStatus>(statusKey);
+  let status = await eacKv.get<EaCStatus>(statusKey);
 
   await waitOnEaCProcessing(
-    denoKv,
+    eacKv,
     status.value!.EnterpriseLookup,
     status.value!.ID,
     commitReq,
-    handleEaCCommitRequest,
+    () => {
+      return handleEaCCommitRequest(eacKv, commitKv, commitReq);
+    },
     commitReq.ProcessingSeconds
   );
 
-  const existingEaC = await denoKv.get<EverythingAsCode>([
+  const existingEaC = await eacKv.get<EverythingAsCode>([
     'EaC',
+    'Current',
     EnterpriseLookup,
   ]);
 
@@ -103,7 +103,7 @@ export async function handleEaCCommitRequest(
 
   diffKeys.forEach(
     processDiffKey(
-      denoKv,
+      eacKv,
       eacDiff,
       saveEaC,
       commitReq,
@@ -125,7 +125,7 @@ export async function handleEaCCommitRequest(
   }
 
   await listenQueueAtomic(
-    denoKv,
+    commitKv,
     commitReq,
     configureListenQueueOp(
       existingEaC,
@@ -136,7 +136,8 @@ export async function handleEaCCommitRequest(
       errors,
       saveEaC,
       toProcess
-    )
+    ),
+    eacKv
   );
 }
 
@@ -193,7 +194,10 @@ function configureListenQueueOp(
       console.log(`Processed EaC commit ${commitReq.CommitID} with errors`);
       console.log(errors);
     } else {
-      op = markEaCProcessed(entLookup, op).set(['EaC', entLookup], saveEaC);
+      op = markEaCProcessed(entLookup, op).set(
+        ['EaC', 'Current', entLookup],
+        saveEaC
+      );
 
       console.log(`Processed EaC commit ${commitReq.CommitID}`);
     }
@@ -309,7 +313,11 @@ function processEaCHandler(
     ) {
       const handled = await callEaCHandler(
         async (entLookup) => {
-          const eac = await denoKv.get<EverythingAsCode>(['EaC', entLookup]);
+          const eac = await denoKv.get<EverythingAsCode>([
+            'EaC',
+            'Current',
+            entLookup,
+          ]);
 
           return eac.value!;
         },

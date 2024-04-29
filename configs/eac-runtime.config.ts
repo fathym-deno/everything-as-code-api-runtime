@@ -2,7 +2,12 @@ import { DefaultEaCConfig, defineEaCConfig, EaCRuntime } from '@fathym/eac/runti
 import EaCAPIPlugin from '../src/plugins/EaCAPIPlugin.ts';
 import { listenForCommits } from '../api/handlers/index.ts';
 import { EverythingAsCode, loadJwtConfig } from '@fathym/eac';
-import { EaCCommitRequest, EaCStatus, EaCStatusProcessingTypes } from '@fathym/eac/api';
+import {
+  EaCCommitRequest,
+  EaCStatus,
+  EaCStatusProcessingTypes,
+  UserEaCRecord,
+} from '@fathym/eac/api';
 import { enqueueAtomic } from '@fathym/eac/deno';
 import { delay } from '$std/async/delay.ts';
 
@@ -25,7 +30,7 @@ async function initializePrimaryEaC(rt: EaCRuntime): Promise<void> {
   const eacKv = await rt.IoC.Resolve(Deno.Kv, 'eac');
 
   const existingEaCs = await eacKv.list(
-    { prefix: ['EaC'] },
+    { prefix: ['EaC', 'Current'] },
     {
       limit: 1,
     },
@@ -45,7 +50,7 @@ async function initializePrimaryEaC(rt: EaCRuntime): Promise<void> {
 
     const entLookup = crypto.randomUUID();
 
-    const usernames = Deno.env.get('EAC_CORE_USERS')?.split(',') || [];
+    const usernames = Deno.env.get('EAC_CORE_USERS')?.split('|') || [];
 
     const jwtConfig = loadJwtConfig();
 
@@ -74,23 +79,28 @@ async function initializePrimaryEaC(rt: EaCRuntime): Promise<void> {
       Username: usernames[0],
     };
 
-    await enqueueAtomic(commitKv, commitReq, (op) => {
-      return op
-        .set(
-          [
-            'EaC',
-            'Status',
-            createStatus.EnterpriseLookup,
-            'ID',
-            createStatus.ID,
-          ],
-          createStatus,
-        )
-        .set(
-          ['EaC', 'Status', createStatus.EnterpriseLookup, 'EaC'],
-          createStatus,
-        );
-    });
+    await enqueueAtomic(
+      commitKv,
+      commitReq,
+      (op) => {
+        return op
+          .set(
+            [
+              'EaC',
+              'Status',
+              createStatus.EnterpriseLookup,
+              'ID',
+              createStatus.ID,
+            ],
+            createStatus,
+          )
+          .set(
+            ['EaC', 'Status', createStatus.EnterpriseLookup, 'EaC'],
+            createStatus,
+          );
+      },
+      eacKv,
+    );
 
     console.log('Waiting for core EaC record...');
 
@@ -102,6 +112,7 @@ async function initializePrimaryEaC(rt: EaCRuntime): Promise<void> {
       eac = (
         await eacKv.get<EverythingAsCode>([
           'EaC',
+          'Current',
           createStatus.EnterpriseLookup,
         ])
       ).value;
@@ -121,6 +132,28 @@ async function initializePrimaryEaC(rt: EaCRuntime): Promise<void> {
 
     console.log('The main JWT to use for connecting with EaC Core:');
     console.log(mainJwt);
+
+    const userRecords = usernames.map((username) => {
+      return {
+        EnterpriseLookup: eac!.EnterpriseLookup,
+        EnterpriseName: eac!.Details!.Name,
+        ParentEnterpriseLookup: eac!.ParentEnterpriseLookup,
+        Username: username,
+      } as UserEaCRecord;
+    });
+
+    let usersSetupOp = eacKv.atomic();
+
+    userRecords.forEach((userEaCRecord) => {
+      usersSetupOp = usersSetupOp
+        .set(['User', userEaCRecord.Username, 'EaC', entLookup], userEaCRecord)
+        .set(
+          ['EaC', 'Users', entLookup, userEaCRecord.Username],
+          userEaCRecord,
+        );
+    });
+
+    await usersSetupOp.commit();
   } else {
     console.log('There are existing EaC Records');
   }

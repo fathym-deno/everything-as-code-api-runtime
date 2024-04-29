@@ -48,11 +48,11 @@ export const listenForCommits = async (rt: EaCRuntime) => {
           await commitKv.set(trackingKey, true);
 
           if (isEaCCommitCheckRequest(msg)) {
-            await handleEaCCommitCheckRequest(eacKv, msg);
+            await handleEaCCommitCheckRequest(eacKv, commitKv, msg);
           } else if (isEaCDeleteRequest(msg)) {
-            await handleEaCDeleteRequest(eacKv, msg);
+            await handleEaCDeleteRequest(eacKv, commitKv, msg);
           } else if (isEaCCommitRequest(msg)) {
-            await handleEaCCommitRequest(eacKv, msg);
+            await handleEaCCommitRequest(eacKv, commitKv, msg);
           }
         } else {
           console.log(

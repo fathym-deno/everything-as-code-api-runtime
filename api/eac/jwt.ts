@@ -32,7 +32,11 @@ export default {
 
     const eacKv = await ctx.Runtime.IoC.Resolve<Deno.Kv>(Deno.Kv, 'eac');
 
-    const eacRes = await eacKv.get<EverythingAsCode>(['EaC', entLookup]);
+    const eacRes = await eacKv.get<EverythingAsCode>([
+      'EaC',
+      'Current',
+      entLookup,
+    ]);
 
     const eac = eacRes.value;
 

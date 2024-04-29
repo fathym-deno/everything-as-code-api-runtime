@@ -80,23 +80,28 @@ export default {
 
     const commitKv = await ctx.Runtime.IoC.Resolve<Deno.Kv>(Deno.Kv, 'commit');
 
-    await enqueueAtomic(commitKv, commitReq, (op) => {
-      return op
-        .set(
-          [
-            'EaC',
-            'Status',
-            createStatus.EnterpriseLookup,
-            'ID',
-            createStatus.ID,
-          ],
-          createStatus
-        )
-        .set(
-          ['EaC', 'Status', createStatus.EnterpriseLookup, 'EaC'],
-          createStatus
-        );
-    });
+    await enqueueAtomic(
+      commitKv,
+      commitReq,
+      (op) => {
+        return op
+          .set(
+            [
+              'EaC',
+              'Status',
+              createStatus.EnterpriseLookup,
+              'ID',
+              createStatus.ID,
+            ],
+            createStatus
+          )
+          .set(
+            ['EaC', 'Status', createStatus.EnterpriseLookup, 'EaC'],
+            createStatus
+          );
+      },
+      eacKv
+    );
 
     console.log(
       `EaC container creation for ${eac.EnterpriseLookup} queued with Commit ID ${createStatus.ID}.`

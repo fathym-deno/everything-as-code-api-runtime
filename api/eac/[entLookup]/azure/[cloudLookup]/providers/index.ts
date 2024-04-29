@@ -22,6 +22,7 @@ export default {
 
     const eacResult = await eacKv.get<EverythingAsCodeClouds>([
       'EaC',
+      'Current',
       entLookup,
     ]);
 

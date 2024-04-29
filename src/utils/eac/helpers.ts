@@ -195,7 +195,7 @@ export async function eacExists(
   denoKv: Deno.Kv,
   entLookup: string,
 ): Promise<boolean> {
-  let exists = await hasKvEntry(denoKv, ['EaC', entLookup]);
+  let exists = await hasKvEntry(denoKv, ['EaC', 'Current', entLookup]);
 
   if (!exists) {
     exists = await hasKvEntry(denoKv, ['EaC', 'Archive', entLookup]);
