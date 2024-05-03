@@ -1,4 +1,5 @@
 // deno-lint-ignore-file no-explicit-any
+import { decode as djwtDecode } from '@djwt';
 import { merge } from '@fathym/common';
 import {
   EaCCloudAsCode,
@@ -14,19 +15,24 @@ import {
   loadMainAzureCredentials,
   loadResoureTypeApiVersions,
 } from '@fathym/eac/azure';
-import { BillingManagementClient } from 'npm:@azure/arm-billing';
 import {
   Deployment,
   DeploymentExtended,
   GenericResourceExpanded,
   ResourceManagementClient,
 } from 'npm:@azure/arm-resources';
-import { AccessToken, ClientSecretCredential } from 'npm:@azure/identity';
+import { SubscriptionClient } from 'npm:@azure/arm-subscriptions';
+import { AccessToken } from 'npm:@azure/identity';
 import {
   AuthenticationProvider,
   AuthenticationProviderOptions,
   Client as GraphClient,
 } from 'npm:@microsoft/microsoft-graph-client';
+import {
+  Application,
+  PasswordCredential,
+  ServicePrincipal,
+} from 'npm:@microsoft/microsoft-graph-types';
 import { TokenCredential } from 'npm:@azure/identity';
 import Handlebars from 'npm:handlebars/dist/handlebars.min.js';
 import { EaCCloudDeployment } from '../reqres/EaCCloudDeployment.ts';
@@ -79,6 +85,8 @@ export async function getCurrentAzureUser(accessToken: string) {
 }
 
 export async function finalizeCloudDetails(
+  entLookup: string,
+  cloudLookup: string,
   commitId: string,
   cloud: EaCCloudAsCode,
 ): Promise<void> {
@@ -87,59 +95,152 @@ export async function finalizeCloudDetails(
 
     const details = cloud.Details as EaCCloudAzureDetails;
 
-    // const creds = loadAzureCloudCredentials(cloud);
-    // const creds = loadMainAzureCredentials();
-
-    const graphClient = GraphClient.initWithMiddleware({
-      authProvider: new TokenProvider(
-        {
-          getToken: () => {
-            return cloud.Token;
-          },
-        } as TokenCredential,
-        {
-          scopes: [`https://graph.microsoft.com/.default`], //"Application.Read.All"],
-        },
-      ),
-    });
-
-    if (cloud.Token && !details.SubscriptionID && !details.TenantID) {
+    if (cloud.Token) {
       const creds = await loadAzureCloudCredentials(cloud);
 
-      const subscriptionId = '00000000-0000-0000-0000-000000000000';
+      const subClient = new SubscriptionClient(creds);
 
-      const billingClient = new BillingManagementClient(creds, subscriptionId);
+      const graphClient = GraphClient.initWithMiddleware({
+        authProvider: new TokenProvider(
+          {
+            getToken: () => {
+              return cloud.Token;
+            },
+          } as TokenCredential,
+          {
+            scopes: [`https://graph.microsoft.com/.default`], //"Application.Read.All"],
+          },
+        ),
+      });
 
-      const _billingAccounts = await billingClient.billingAccounts.list();
+      const [_, payload] = await djwtDecode(cloud.Token as string);
 
-      // TODO(mcgear): Create Subsction
-      // TODO(mcgear): Set cloud.Details.SubscriptionID values to cloud
-      // TODO(mcgear): Set cloud.Details.TenantID values to cloud
+      if (!details.TenantID) {
+        details.TenantID ??= (payload as any).tid;
+      }
+
+      if (!details.SubscriptionID) {
+        // && !details.TenantID) {
+        const createResp = await subClient.alias.beginCreateAndWait(
+          crypto.randomUUID(),
+          {
+            properties: {
+              displayName: details.Name as string,
+              workload: details.IsDev ? 'DevTest' : 'Production',
+              billingScope: details.BillingScope as string,
+              additionalProperties: {
+                subscriptionTenantId: details.TenantID as string,
+                subscriptionOwnerId: (payload as any).oid,
+              },
+            },
+          },
+        );
+
+        details.SubscriptionID = createResp.properties?.subscriptionId!;
+
+        delete details.AgreementType;
+        delete details.BillingScope;
+        delete details.IsDev;
+      }
+
+      if (details.SubscriptionID && !details.Name) {
+        const sub = await subClient.subscriptions.get(details.SubscriptionID);
+
+        details.Name = sub.displayName;
+
+        details.Description ??= sub.displayName;
+      }
+
+      if (
+        details.SubscriptionID &&
+        details.TenantID &&
+        !details.ApplicationID
+      ) {
+        const appName = `eac|${details.SubscriptionID}|${entLookup}|${cloudLookup}`;
+
+        const appRes: { value: Application[] } = await graphClient
+          .api('/applications')
+          .filter(`displayName eq '${appName}'`)
+          .get();
+
+        let app = appRes.value[0];
+
+        if (!app) {
+          app = {
+            displayName: appName,
+            description: details.Description,
+          };
+        }
+
+        // TODO(mcgear): Ensure only a single application is create per some context, retreive existing and update it if necessary... Or...
+        app = await graphClient.api('/applications').post(app);
+
+        details.ApplicationID = app.appId!;
+      }
+
+      if (
+        details.SubscriptionID &&
+        details.TenantID &&
+        details.ApplicationID &&
+        !details.AuthKey
+      ) {
+        const appName = `eac|${details.SubscriptionID}|${entLookup}|${cloudLookup}`;
+
+        const spRes: { value: ServicePrincipal[] } = await graphClient
+          .api('/servicePrincipals')
+          .filter(`appId eq '${details.ApplicationID}'`)
+          .filter(`displayName eq '${appName}'`)
+          .get();
+
+        let svcPrincipal = spRes.value[0];
+
+        if (!svcPrincipal) {
+          svcPrincipal = {
+            appId: details.ApplicationID,
+            displayName: appName,
+            description: details.Description,
+          };
+        }
+
+        // TODO(mcgear): Ensure only a single svc principal is create per some context, retreive existing and update it if necessary... Or...
+        svcPrincipal = await graphClient
+          .api('/servicePrincipals')
+          .post(svcPrincipal);
+
+        details.ID = svcPrincipal.id!;
+
+        const spPassword: PasswordCredential = await graphClient
+          .api(`/servicePrincipals/${details.ID}/addPassword`)
+          .post({
+            displayName: `${details.Name} Password`,
+          } as PasswordCredential);
+
+        details.AuthKey = spPassword.secretText!;
+
+        // TODO(mcgear): Add role assignment (if necessary)
+        // await graphClient
+        //   .api(`/servicePrincipals/${details.ID}/appRoleAssignments`)
+        //   .post({
+        //     // Owner - https://learn.microsoft.com/en-us/azure/role-based-access-control/built-in-roles
+        //     appRoleId: '8e3af657-a8ff-443c-a75c-2fe8c4bcb635',
+        //     principalId: details.ID,
+        //     resourceId: details.ApplicationID,
+        //   } as PasswordCredential);
+      }
+
+      if (!details.ID && details.ApplicationID) {
+        const svcPrinc = await graphClient
+          .api('/servicePrincipals')
+          .filter(`appId eq '${details.ApplicationID}'`)
+          .select(['id'])
+          .get();
+
+        details.ID = svcPrinc.value[0].id;
+      }
+
+      delete cloud.Token;
     }
-
-    if (
-      cloud.Token &&
-      details.SubscriptionID &&
-      details.TenantID &&
-      !details.ApplicationID &&
-      !details.AuthKey
-    ) {
-      // TODO(mcgear):  Create RBAC service principal
-      // TODO(mcgear): Set cloud.Details.* values to RBAC svc principal
-    }
-
-    // const client = new ApplicationClient(creds, details.SubscriptionID);
-
-    const svcPrinc = await graphClient
-      .api('/servicePrincipals')
-      .filter(`appId eq '${details.ApplicationID}'`)
-      .select(['id'])
-      .get();
-
-    cloud.Details.ID = svcPrinc.value[0].id;
   }
-
-  delete cloud.Token;
 }
 
 export async function buildCloudDeployments(
@@ -453,7 +554,7 @@ export async function loadCloudResourceGroupsConnections(
 }
 
 export async function loadCloudResourcesConnections(
-  creds: ClientSecretCredential,
+  creds: TokenCredential,
   azureResources: GenericResourceExpanded[],
   apiVersions: Record<string, string>,
   resourcesDef: Record<string, EaCCloudResourceAsCode>,
@@ -538,7 +639,7 @@ export async function loadCloudResourcesConnections(
 }
 
 export async function loadResourcePublishProfiles(
-  creds: ClientSecretCredential,
+  creds: TokenCredential,
   apiVersion: string,
   resId: string,
 ) {
@@ -564,7 +665,7 @@ export async function loadResourcePublishProfiles(
       method: 'POST',
       body: JSON.stringify({}),
       headers: {
-        Authorization: `Bearer ${token.token}`,
+        Authorization: `Bearer ${token!.token}`,
         'Content-Type': 'application/json',
       },
     },
@@ -592,7 +693,7 @@ export async function loadResourcePublishProfiles(
 }
 
 export async function loadResourceKeys(
-  creds: ClientSecretCredential,
+  creds: TokenCredential,
   apiVersion: string,
   resId: string,
   resType: string,
@@ -626,7 +727,7 @@ export async function loadResourceKeys(
       method: 'POST',
       body: JSON.stringify({}),
       headers: {
-        Authorization: `Bearer ${token.token}`,
+        Authorization: `Bearer ${token!.token}`,
       },
     });
 

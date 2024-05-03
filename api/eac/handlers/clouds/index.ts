@@ -2,6 +2,7 @@ import { respond } from '@fathym/common';
 import {
   EaCCloudAsCode,
   EaCCloudAzureDetails,
+  EverythingAsCode,
   EverythingAsCodeClouds,
   isEaCCloudAzureDetails,
 } from '@fathym/eac';
@@ -32,7 +33,7 @@ export default {
         `Processing EaC commit ${handlerRequest.CommitID} Cloud processes for cloud ${handlerRequest.Lookup}`
       );
 
-      const eac = handlerRequest.EaC as EverythingAsCodeClouds;
+      const eac = handlerRequest.EaC as EverythingAsCode & EverythingAsCodeClouds;
 
       const currentClouds = eac.Clouds || {};
 
@@ -42,7 +43,7 @@ export default {
 
       const cloud = handlerRequest.Model as EaCCloudAsCode;
 
-      await finalizeCloudDetails(handlerRequest.CommitID, cloud);
+      await finalizeCloudDetails(eac.EnterpriseLookup!, cloudLookup, handlerRequest.CommitID, cloud);
 
       const deployments = await buildCloudDeployments(
         handlerRequest.CommitID,
