@@ -15,6 +15,7 @@ import {
   loadMainAzureCredentials,
   loadResoureTypeApiVersions,
 } from '@fathym/eac/azure';
+import { AuthorizationManagementClient } from 'npm:@azure/arm-authorization';
 import {
   Deployment,
   DeploymentExtended,
@@ -37,6 +38,7 @@ import { TokenCredential } from 'npm:@azure/identity';
 import Handlebars from 'npm:handlebars/dist/handlebars.min.js';
 import { EaCCloudDeployment } from '../reqres/EaCCloudDeployment.ts';
 import { EaCHandlerCheckRequest } from '../reqres/EaCHandlerCheckRequest.ts';
+import { delay } from '$std/async/delay.ts';
 
 class TokenProvider implements AuthenticationProvider {
   constructor(
@@ -217,6 +219,23 @@ export async function finalizeCloudDetails(
 
         details.AuthKey = spPassword.secretText!;
 
+        const client = new AuthorizationManagementClient(
+          creds,
+          details.SubscriptionID,
+        );
+
+        const scope = `/subscriptions/${details.SubscriptionID}`;
+
+        await client.roleAssignments.create(scope, details.ID, {
+          // Owner - https://learn.microsoft.com/en-us/azure/role-based-access-control/built-in-roles
+          roleDefinitionId:
+            `${scope}/providers/Microsoft.Authorization/roleDefinitions/8e3af657-a8ff-443c-a75c-2fe8c4bcb635`,
+          principalId: details.ID,
+          principalType: 'ServicePrincipal',
+        });
+
+        await delay(2500);
+
         // TODO(mcgear): Add role assignment (if necessary)
         // await graphClient
         //   .api(`/servicePrincipals/${details.ID}/appRoleAssignments`)
@@ -237,10 +256,10 @@ export async function finalizeCloudDetails(
 
         details.ID = svcPrinc.value[0].id;
       }
-
-      delete cloud.Token;
     }
   }
+
+  cloud.Token = '';
 }
 
 export async function buildCloudDeployments(
