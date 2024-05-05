@@ -234,7 +234,7 @@ export async function finalizeCloudDetails(
           principalType: 'ServicePrincipal',
         });
 
-        await delay(2500);
+        await delay(5000);
 
         // TODO(mcgear): Add role assignment (if necessary)
         // await graphClient
