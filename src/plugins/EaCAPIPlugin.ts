@@ -15,8 +15,7 @@ import {
 export default class EaCAPIPlugin implements EaCRuntimePlugin {
   constructor() {}
 
-  public Build(config: EaCRuntimeConfig): Promise<EaCRuntimePluginConfig> {
-    console.log(config);
+  public Setup(config: EaCRuntimeConfig): Promise<EaCRuntimePluginConfig> {
     const pluginConfig: EaCRuntimePluginConfig = {
       Name: 'EaCAPIPlugin',
       Plugins: [new FathymAzureContainerCheckPlugin()],
