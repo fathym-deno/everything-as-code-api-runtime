@@ -6,7 +6,11 @@ import {
   EverythingAsCodeClouds,
   isEaCCloudAzureDetails,
 } from '@fathym/eac';
-import { eacSetSecrets, loadMainSecretClient } from '@fathym/eac/azure';
+import {
+  eacSetSecrets,
+  loadAzureCloudCredentials,
+  loadMainSecretClient,
+} from '@fathym/eac/azure';
 import { EaCRuntimeContext, EaCRuntimeHandlers } from '@fathym/eac/runtime';
 import { EaCAPIUserState } from '../../../../src/state/EaCAPIUserState.ts';
 import { EaCHandlerRequest } from '../../../../src/reqres/EaCHandlerRequest.ts';
@@ -16,6 +20,7 @@ import { EaCHandlerErrorResponse } from '../../../../src/reqres/EaCHandlerErrorR
 import {
   beginEaCDeployments,
   buildCloudDeployments,
+  ensureRoleAssignments,
   finalizeCloudDetails,
 } from '../../../../src/eac/clouds.helpers.ts';
 
@@ -57,7 +62,7 @@ export default {
 
       const checks: EaCHandlerCheckRequest[] = await beginEaCDeployments(
         handlerRequest.CommitID,
-        current,
+        cloud.Details ? cloud : current,
         deployments
       );
 

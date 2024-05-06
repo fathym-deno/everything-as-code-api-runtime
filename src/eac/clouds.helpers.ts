@@ -8,6 +8,7 @@ import {
   EaCCloudResourceFormatDetails,
   EaCCloudResourceGroupAsCode,
   EaCCloudResourceGroupDetails,
+  EaCCloudRoleAssignment,
   EverythingAsCodeClouds,
 } from '@fathym/eac';
 import {
@@ -219,32 +220,17 @@ export async function finalizeCloudDetails(
 
         details.AuthKey = spPassword.secretText!;
 
-        const client = new AuthorizationManagementClient(
-          creds,
-          details.SubscriptionID,
-        );
-
         const scope = `/subscriptions/${details.SubscriptionID}`;
 
-        await client.roleAssignments.create(scope, details.ID, {
-          // Owner - https://learn.microsoft.com/en-us/azure/role-based-access-control/built-in-roles
-          roleDefinitionId:
-            `${scope}/providers/Microsoft.Authorization/roleDefinitions/8e3af657-a8ff-443c-a75c-2fe8c4bcb635`,
-          principalId: details.ID,
-          principalType: 'ServicePrincipal',
-        });
-
-        await delay(5000);
-
-        // TODO(mcgear): Add role assignment (if necessary)
-        // await graphClient
-        //   .api(`/servicePrincipals/${details.ID}/appRoleAssignments`)
-        //   .post({
-        //     // Owner - https://learn.microsoft.com/en-us/azure/role-based-access-control/built-in-roles
-        //     appRoleId: '8e3af657-a8ff-443c-a75c-2fe8c4bcb635',
-        //     principalId: details.ID,
-        //     resourceId: details.ApplicationID,
-        //   } as PasswordCredential);
+        await ensureRoleAssignments(creds, details.SubscriptionID, [
+          {
+            Scope: scope,
+            PrincipalID: details.ID,
+            PrincipalType: 'ServicePrincipal',
+            // Owner - https://learn.microsoft.com/en-us/azure/role-based-access-control/built-in-roles
+            RoleDefinitionID: '8e3af657-a8ff-443c-a75c-2fe8c4bcb635',
+          },
+        ]);
       }
 
       if (!details.ID && details.ApplicationID) {
@@ -260,6 +246,60 @@ export async function finalizeCloudDetails(
   }
 
   cloud.Token = '';
+}
+
+export async function ensureRoleAssignments(
+  creds: TokenCredential,
+  subId: string,
+  roleAssigns: EaCCloudRoleAssignment[],
+) {
+  const client = new AuthorizationManagementClient(creds, subId);
+
+  const roleAssignCalls = roleAssigns.map(async (roleAssign) => {
+    const roleName = await generateGuid(
+      subId,
+      roleAssign.PrincipalID,
+      roleAssign.RoleDefinitionID,
+    );
+
+    try {
+      await client.roleAssignments.get(roleAssign.Scope, roleName);
+    } catch {
+      await client.roleAssignments.create(roleAssign.Scope, roleName, {
+        roleDefinitionId:
+          `${roleAssign.Scope}/providers/Microsoft.Authorization/roleDefinitions/${roleAssign.RoleDefinitionID}`,
+        principalId: roleAssign.PrincipalID,
+        principalType: roleAssign.PrincipalType,
+      });
+    }
+  });
+
+  await Promise.all(roleAssignCalls);
+
+  await delay(5000);
+}
+
+export async function generateGuid(...input: any[]): Promise<string> {
+  const encoder = new TextEncoder();
+  const data = encoder.encode(JSON.stringify(input));
+
+  // Calculate SHA-256 hash of the input
+  const hashBuffer = await crypto.subtle.digest('SHA-256', data);
+  const hashArray = Array.from(new Uint8Array(hashBuffer));
+  const hashHex = hashArray
+    .map((byte) => byte.toString(16).padStart(2, '0'))
+    .join('');
+
+  // GUID format: 8-4-4-4-12 (32 characters)
+  const guid = [
+    hashHex.substring(0, 8),
+    hashHex.substring(8, 12),
+    hashHex.substring(12, 16),
+    hashHex.substring(16, 20),
+    hashHex.substring(20, 32),
+  ].join('-');
+
+  return guid;
 }
 
 export async function buildCloudDeployments(
@@ -620,7 +660,9 @@ export async function loadCloudResourcesConnections(
       }
     }
 
-    const resDef = resourcesDef && resourcesDef[resLookup] ? resourcesDef[resLookup] : {};
+    const resDef = resourcesDef && resourcesDef[resLookup]
+      ? resourcesDef[resLookup]
+      : ({} as EaCCloudResourceAsCode);
 
     let resResLookups = Object.keys(resDef?.Resources || {});
 
