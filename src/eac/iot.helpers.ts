@@ -42,7 +42,7 @@ export async function ensureIoTDevices(
     );
 
     const iotHubConnStr =
-      `HostName=${iotHubName}.azure-devices.net;SharedAccessKeyName=${keyName};SharedAccessKey=${keys.primaryKey}`;
+      `HostName=${iotHubName}.azure-devices.net;SharedAccessKeyName=${keyName};SharedAccessKey=${keys.secondaryKey}`;
 
     const iotRegistry = IoTRegistry.fromConnectionString(iotHubConnStr);
 

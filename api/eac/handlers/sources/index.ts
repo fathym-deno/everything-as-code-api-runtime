@@ -97,10 +97,8 @@ export default {
             source.Details!.Organization
           }/${source.Details!.Repository}`;
 
-          await delay(1000);
+          await delay(5000);
         }
-
-        const calls: Promise<unknown>[] = [];
 
         await ensureSourceSecrets(
           eac,
@@ -110,7 +108,7 @@ export default {
           source
         );
 
-        await delay(1000);
+        await delay(3000);
 
         await ensureSourceArtifacts(
           eac,
@@ -120,7 +118,7 @@ export default {
           source
         );
 
-        await Promise.all(calls);
+        await delay(3000);
       }
 
       return respond({
