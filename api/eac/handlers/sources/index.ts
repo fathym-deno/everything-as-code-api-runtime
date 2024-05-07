@@ -108,7 +108,7 @@ export default {
           source
         );
 
-        await delay(3000);
+        await delay(1000);
 
         await ensureSourceArtifacts(
           eac,
@@ -117,8 +117,6 @@ export default {
           current,
           source
         );
-
-        await delay(3000);
       }
 
       return respond({
