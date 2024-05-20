@@ -17,6 +17,10 @@ export const eacHandlers: EaCHandlers = {
     APIPath: 'http://localhost:6130/api/eac/handlers/iot',
     Order: 200,
   },
+  Licenses: {
+    APIPath: 'http://localhost:6130/api/eac/handlers/licenses',
+    Order: 200,
+  },
   Secrets: {
     APIPath: 'http://localhost:6130/api/eac/handlers/secrets',
     Order: 300,

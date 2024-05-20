@@ -19,6 +19,7 @@
       "runtimeExecutable": "deno.exe",
       "runtimeArgs": [
         "test",
+        "-A",
         "--config",
         "./deno.jsonc",
         "--inspect-wait"

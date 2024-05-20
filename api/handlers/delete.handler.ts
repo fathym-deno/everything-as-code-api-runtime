@@ -114,6 +114,8 @@ export async function handleEaCDeleteRequest(
           .set(['EaC', 'Archive', deleteReq.EaC.EnterpriseLookup!], eac.value)
           .delete(['EaC', 'Current', deleteReq.EaC.EnterpriseLookup!]);
 
+        // TODO(ttrichar): Delete all licenses as well
+
         for (const userEaCRecord of userEaCRecords) {
           op = op
             .delete([
