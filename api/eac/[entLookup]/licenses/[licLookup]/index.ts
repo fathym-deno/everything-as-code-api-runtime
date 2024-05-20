@@ -77,11 +77,15 @@ export default {
 
           const validStati = ['trialing', 'active'];
 
-          return Response.json({
+          const res = {
             Active: sub && validStati.some((vs) => vs === sub.status),
             License: userLicense,
             Subscription: sub,
-          });
+          };
+
+          console.log(res);
+
+          return Response.json(res);
         }
       }
     }
