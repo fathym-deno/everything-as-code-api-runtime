@@ -66,7 +66,7 @@ export default {
         if (customer) {
           const subs = await stripe.subscriptions.search({
             query: [
-              `metadata["username"]:"${username}"`,
+              `metadata["customer"]:"${customer.id}"`,
               `metadata["license"]:"${licLookup}"`,
             ].join(' AND '),
             limit: 1,
