@@ -120,7 +120,12 @@ export default {
       entLookup,
     ]);
 
+    console.log('*****************Licensing****************');
+    console.log(licLookup);
+    
     const eacLicense = eac.value?.Licenses?.[licLookup];
+
+    console.log(eacLicense);
 
     if (eacLicense) {
       let stripeDetails = eacLicense.Details as EaCLicenseStripeDetails;
@@ -138,6 +143,8 @@ export default {
         ...secreted,
       };
 
+      console.log(stripeDetails);
+
       const stripe: Stripe = (Stripe as any)(stripeDetails.SecretKey)!;
 
       try {
@@ -153,6 +160,8 @@ export default {
             email: username,
           });
         }
+
+        console.log(customer);
 
         const subs = await stripe.subscriptions.search({
           query: [
@@ -183,6 +192,8 @@ export default {
         });
 
         const priceId = prices.data[0].id;
+
+        console.log(priceId);
 
         if (
           sub.status === 'incomplete' &&
@@ -229,6 +240,8 @@ export default {
             expand: ['latest_invoice.payment_intent'],
           });
         }
+
+        console.log(sub);
 
         if (sub) {
           licenses[licLookup] = licReq;
