@@ -257,6 +257,8 @@ export default {
           });
         }
       } catch (error) {
+        console.log(error);
+        
         return Response.json(error, {
           status: STATUS_CODE.BadRequest,
         });
