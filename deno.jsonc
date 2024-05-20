@@ -20,7 +20,7 @@
     // "@fathym/common": "../reference-architecture/mod.ts",
     "@fathym/common": "https://deno.land/x/fathym_common@v0.0.183/mod.ts",
     // "@fathym/eac/api": "../everything-as-code-api/mod.ts",
-    "@fathym/eac/api": "https://deno.land/x/fathym_everything_as_code_api@v0.0.39/mod.ts",
+    "@fathym/eac/api": "https://deno.land/x/fathym_everything_as_code_api@v0.0.40/mod.ts",
     // "@fathym/eac/azure": "../everything-as-code/azure.ts",
     "@fathym/eac/azure": "https://deno.land/x/fathym_everything_as_code@v0.0.412/azure.ts",
     "@fathym/eac/deno": "https://deno.land/x/fathym_everything_as_code@v0.0.412/deno.ts",
