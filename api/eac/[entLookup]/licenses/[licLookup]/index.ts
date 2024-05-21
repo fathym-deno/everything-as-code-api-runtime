@@ -13,7 +13,9 @@ export default {
   async GET(req, ctx) {
     const entLookup = ctx.State.UserEaC!.EnterpriseLookup;
 
-    const username = ctx.State.Username!;
+    const url = new URL(req.url);
+
+    const username = url.searchParams.get('username')!;
 
     const licLookup = ctx.Params.licLookup as string;
 
@@ -83,8 +85,6 @@ export default {
             Subscription: sub,
           };
 
-          console.log(res);
-
           return Response.json(res);
         }
       }
@@ -96,7 +96,9 @@ export default {
   async POST(req, ctx) {
     const entLookup = ctx.State.UserEaC!.EnterpriseLookup;
 
-    const username = ctx.State.Username!;
+    const url = new URL(req.url);
+
+    const username = url.searchParams.get('username')!;
 
     const licLookup = ctx.Params.licLookup as string;
 
@@ -267,7 +269,9 @@ export default {
   async DELETE(req, ctx) {
     const entLookup = ctx.State.UserEaC!.EnterpriseLookup;
 
-    const username = ctx.State.Username!;
+    const url = new URL(req.url);
+
+    const username = url.searchParams.get('username')!;
 
     const licLookup = ctx.Params.licLookup as string;
 

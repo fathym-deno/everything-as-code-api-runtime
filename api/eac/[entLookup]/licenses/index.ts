@@ -6,7 +6,9 @@ export default {
   async GET(req, ctx) {
     const entLookup = ctx.State.UserEaC!.EnterpriseLookup;
 
-    const username = ctx.State.Username!;
+    const url = new URL(req.url);
+
+    const username = url.searchParams.get('username')!;
 
     const eacKv = await ctx.Runtime.IoC.Resolve<Deno.Kv>(Deno.Kv, 'eac');
 
