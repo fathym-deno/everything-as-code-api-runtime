@@ -28,18 +28,22 @@ export default class EaCAPIPlugin implements EaCRuntimePlugin {
               Priority: 100,
             },
             ResolverConfigs: {
-              dev: {
+              localhost: {
                 Hostname: 'localhost',
                 Port: config.Server.port || 8000,
               },
-              dev2: {
+              '127.0.0.1': {
                 Hostname: '127.0.0.1',
                 Port: config.Server.port || 8000,
               },
-              eacApi: {
+              'host.docker.internal': {
+                Hostname: 'host.docker.internal',
+                Port: config.Server.port || 8000,
+              },
+              'eac-api.fathym.com': {
                 Hostname: 'eac-api.fathym.com',
               },
-              eacApiAzure: {
+              'everything-as-code-api-runtime.azurewebsites.net': {
                 Hostname: 'everything-as-code-api-runtime.azurewebsites.net',
               },
             },

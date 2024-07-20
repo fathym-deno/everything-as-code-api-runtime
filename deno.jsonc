@@ -28,10 +28,10 @@
     "@fathym/eac": "https://deno.land/x/fathym_everything_as_code@v0.0.415/mod.ts",
     "@fathym/eac/octokit": "https://deno.land/x/fathym_everything_as_code@v0.0.415/octokit.ts",
     // "@fathym/eac/runtime": "../eac-runtime/mod.ts",
-    "@fathym/eac/runtime": "https://deno.land/x/fathym_eac_runtime@v0.0.275/mod.ts",
+    "@fathym/eac/runtime": "https://deno.land/x/fathym_eac_runtime@v0.0.284/mod.ts",
     // "@fathym/eac/runtime/": "../eac-runtime/"
-    "@fathym/eac/runtime/": "https://deno.land/x/fathym_eac_runtime@v0.0.275/",
-    "@fathym/eac/runtime/browser": "https://deno.land/x/fathym_eac_runtime@v0.0.275/browser.ts",
+    "@fathym/eac/runtime/": "https://deno.land/x/fathym_eac_runtime@v0.0.284/",
+    "@fathym/eac/runtime/browser": "https://deno.land/x/fathym_eac_runtime@v0.0.284/browser.ts",
     // "@octokit": 'https://esm.sh/@octokit/auth-oauth-user@4.0.1';
     "@octokit/auth-token": "https://esm.sh/@octokit/auth-token@4.0.0",
     "@octokit/openapi-types": "https://esm.sh/@octokit/openapi-types@19.1.0",
