@@ -1,15 +1,19 @@
 {
+  "name": "@fathym/everything-as-code-api-runtime",
   "tasks": {
     "build": "deno task build:fmt && deno task build:lint && deno task build:main",
     "build:dev": "deno run -A dev.ts build",
-    "build:docker": "docker build --no-cache -t eac-runtime -f DOCKERFILE .",
+    "build:docker": "docker build --no-cache -t everything-as-code-api-runtime -f DOCKERFILE .",
     "build:fmt": "deno fmt",
     "build:lint": "deno lint",
     "build:main": "deno run -A main.ts build",
     "check": "deno fmt --check && deno lint && deno check **/*.ts && deno check **/*.tsx",
+    "clean:docker": "docker stop everything-as-code-api-runtime || true && docker rm everything-as-code-api-runtime || true",
     "deploy": "deno task build && deno task test && npx ftm git",
-    "deploy:docker": "docker run -dp 127.0.0.1:3000:3000 eac-runtime",
+    "deploy:docker": "docker run --name everything-as-code-api-runtime --network eac-runtimes --env-file .env -dp 127.0.0.1:6130:6130 everything-as-code-api-runtime",
     "dev": "deno run -A --watch=api/,configs/,data/,routes/,src/,static/ dev.ts",
+    "network:docker": "docker network create eac-runtimes || true",
+    "refresh:docker": "deno task build:docker && deno task network:docker && deno task clean:docker && deno task deploy:docker",
     "start": "deno run -A main.ts",
     "test": "deno test -A tests/tests.ts --coverage=cov"
   },
