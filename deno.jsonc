@@ -1,5 +1,7 @@
 {
   "name": "@fathym/everything-as-code-api-runtime",
+  "version": "0.0.0",
+  "exports": "./main.ts",
   "tasks": {
     "build": "deno task build:fmt && deno task build:lint && deno task build:main",
     "build:dev": "deno run -A dev.ts build",
@@ -10,7 +12,7 @@
     "check": "deno fmt --check && deno lint && deno check **/*.ts && deno check **/*.tsx",
     "clean:docker": "docker stop everything-as-code-api-runtime || true && docker rm everything-as-code-api-runtime || true",
     "deploy": "deno task build && deno task test && npx ftm git",
-    "deploy:docker": "docker run --name everything-as-code-api-runtime --network eac-runtimes --env-file .env -dp 127.0.0.1:6130:6130 everything-as-code-api-runtime",
+    "deploy:docker": "docker run --name everything-as-code-api-runtime --network eac-runtimes --env-file .env.docker -dp 127.0.0.1:6130:6130 -v C:\\fathym\\denokv\\everything-as-code-api-runtime:/_project/denokv everything-as-code-api-runtime",
     "dev": "deno run -A --watch=api/,configs/,data/,routes/,src/,static/ dev.ts",
     "network:docker": "docker network create eac-runtimes || true",
     "refresh:docker": "deno task build:docker && deno task network:docker && deno task clean:docker && deno task deploy:docker",
