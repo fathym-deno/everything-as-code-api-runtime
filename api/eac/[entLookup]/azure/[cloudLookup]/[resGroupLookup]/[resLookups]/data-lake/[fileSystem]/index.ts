@@ -76,7 +76,7 @@ export const flattenJson = (function (isArray, wrapped) {
 })(Array.isArray, Object);
 
 export default {
-  async POST(req, ctx: EaCRuntimeContext<EaCAPIUserState>) {
+  async GET(req, ctx: EaCRuntimeContext<EaCAPIUserState>) {
     const entLookup = ctx.State.UserEaC!.EnterpriseLookup;
 
     const cloudLookup = ctx.Params.cloudLookup as string;
