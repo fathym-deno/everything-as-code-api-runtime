@@ -1,7 +1,7 @@
-import { respond } from '@fathym/common';
+
 import { EaCCloudAzureDetails, EverythingAsCodeClouds } from '@fathym/eac';
 import { loadAzureCloudCredentials } from '@fathym/eac/azure';
-import { EaCServiceDefinitions } from '@fathym/eac/api';
+import { EaCServiceDefinitions } from '@fathym/eac-api';
 import { EaCRuntimeContext, EaCRuntimeHandlers } from '@fathym/eac/runtime';
 import { Provider, ResourceManagementClient } from 'npm:@azure/arm-resources';
 import { EaCAPIUserState } from '../../../../../../src/state/EaCAPIUserState.ts';
@@ -59,7 +59,7 @@ export default {
       `Providers are registered to cloud ${cloudLookup} for enterprise ${entLookup}`
     );
 
-    return respond({
+    return Response.json({
       Locations: locations,
     });
   },

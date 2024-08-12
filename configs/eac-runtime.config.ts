@@ -7,9 +7,9 @@ import {
   EaCStatus,
   EaCStatusProcessingTypes,
   UserEaCRecord,
-} from '@fathym/eac/api';
+} from '@fathym/eac-api';
 import { enqueueAtomic } from '@fathym/eac/deno';
-import { delay } from '$std/async/delay.ts';
+import { delay } from '@std/async/delay';
 
 export const config = defineEaCConfig({
   Plugins: [new EaCAPIPlugin(), ...(DefaultEaCConfig.Plugins || [])],

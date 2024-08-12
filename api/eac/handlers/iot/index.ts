@@ -1,4 +1,4 @@
-import { respond } from '@fathym/common';
+
 import {
   EaCIoTAsCode,
   EverythingAsCodeClouds,
@@ -38,7 +38,7 @@ export default {
       const devicesResp = await ensureIoTDevices(iotCloud, current, iot);
 
       if (Object.keys(devicesResp || {}).length === 0) {
-        return respond({
+        return Response.json({
           Checks: [],
           Lookup: iotLookup,
           Messages: {
@@ -47,7 +47,7 @@ export default {
           Model: iot,
         } as EaCHandlerResponse);
       } else {
-        return respond({
+        return Response.json({
           HasError: true,
           Messages: {
             Errors: devicesResp,
@@ -57,7 +57,7 @@ export default {
     } catch (err) {
       console.error(err);
 
-      return respond({
+      return Response.json({
         HasError: true,
         Messages: {
           Error: JSON.stringify(err),

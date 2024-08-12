@@ -1,5 +1,5 @@
-import { STATUS_CODE } from '$std/http/status.ts';
-import { respond } from '@fathym/common';
+import { STATUS_CODE } from '@std/http/status';
+
 import { EverythingAsCode } from '@fathym/eac';
 import { enqueueAtomic } from '@fathym/eac/deno';
 import {
@@ -7,7 +7,7 @@ import {
   EaCCommitResponse,
   EaCStatus,
   EaCStatusProcessingTypes,
-} from '@fathym/eac/api';
+} from '@fathym/eac-api';
 import { EaCRuntimeContext, EaCRuntimeHandlers } from '@fathym/eac/runtime';
 import { EaCAPIUserState } from '../../../src/state/EaCAPIUserState.ts';
 import { EaCDeleteRequest } from '../../../src/reqres/EaCDeleteRequest.ts';
@@ -66,7 +66,7 @@ export default {
     };
 
     if (!commitReq.EaC.EnterpriseLookup) {
-      return respond(
+      return Response.json(
         {
           Message: 'The enterprise lookup must be provided.',
         },
@@ -79,7 +79,7 @@ export default {
     const eacKv = await ctx.Runtime.IoC.Resolve<Deno.Kv>(Deno.Kv, 'eac');
 
     if (!(await eacExists(eacKv, commitReq.EaC.EnterpriseLookup))) {
-      return respond(
+      return Response.json(
         {
           Message:
             'The enterprise must first be created before it can be updated.',
@@ -119,7 +119,7 @@ export default {
       `EaC container update for ${eac.EnterpriseLookup} queued with Commit ID ${commitStatus.ID}.`
     );
 
-    return respond({
+    return Response.json({
       CommitID: commitStatus.ID,
       EnterpriseLookup: commitStatus.EnterpriseLookup,
       Message: `The enterprise '${commitReq.EaC.EnterpriseLookup}' commit has been queued.`,
@@ -163,7 +163,7 @@ export default {
     };
 
     if (!deleteReq.EaC.EnterpriseLookup) {
-      return respond(
+      return Response.json(
         {
           Message: 'The enterprise lookup must be provided.',
         },
@@ -176,7 +176,7 @@ export default {
     const eacKv = await ctx.Runtime.IoC.Resolve<Deno.Kv>(Deno.Kv, 'eac');
 
     if (!(await eacExists(eacKv, deleteReq.EaC.EnterpriseLookup))) {
-      return respond(
+      return Response.json(
         {
           Message: `The enterprise must first be created before it can ${
             deleteReq.Archive ? ' be archived' : 'execute delete operations'
@@ -213,7 +213,7 @@ export default {
       eacKv
     );
 
-    return respond({
+    return Response.json({
       CommitID: commitStatus.ID,
       EnterpriseLookup: commitStatus.EnterpriseLookup,
       Message: `The enterprise '${deleteReq.EaC.EnterpriseLookup}' ${

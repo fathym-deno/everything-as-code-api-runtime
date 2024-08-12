@@ -5,7 +5,7 @@ import {
   SubscriptionClient,
 } from 'npm:@azure/arm-subscriptions';
 import { EaCAPIUserState } from '../../../../../src/state/EaCAPIUserState.ts';
-import { AzureTenanatsRequest } from '@fathym/eac/api';
+import { AzureTenanatsRequest } from '@fathym/eac-api';
 
 export default {
   async GET(req, ctx: EaCRuntimeContext<EaCAPIUserState>) {

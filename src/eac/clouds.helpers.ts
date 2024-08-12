@@ -39,7 +39,7 @@ import { TokenCredential } from 'npm:@azure/identity';
 import Handlebars from 'npm:handlebars/dist/handlebars.min.js';
 import { EaCCloudDeployment } from '../reqres/EaCCloudDeployment.ts';
 import { EaCHandlerCheckRequest } from '../reqres/EaCHandlerCheckRequest.ts';
-import { delay } from '$std/async/delay.ts';
+import { delay } from '@std/async/delay';
 
 class TokenProvider implements AuthenticationProvider {
   constructor(

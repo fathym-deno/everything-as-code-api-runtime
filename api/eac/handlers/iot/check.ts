@@ -1,4 +1,4 @@
-import { respond } from '@fathym/common';
+
 import { EaCRuntimeContext, EaCRuntimeHandlers } from '@fathym/eac/runtime';
 import { EaCAPIUserState } from '../../../../src/state/EaCAPIUserState.ts';
 import { EaCHandlerIoTCheckRequest } from '../../../../src/reqres/EaCHandlerIoTCheckRequest.ts';
@@ -12,7 +12,7 @@ export default {
       `Processing EaC commit ${checkRequest.CommitID} IoT checks`,
     );
 
-    return respond({
+    return Response.json({
       CorelationID: checkRequest.CorelationID,
       Complete: true,
       HasError: false,

@@ -1,5 +1,5 @@
 import { EverythingAsCode } from '@fathym/eac';
-import { EaCCommitRequest } from '@fathym/eac/api';
+import { EaCCommitRequest } from '@fathym/eac-api';
 import { EaCHandlerCheckRequest } from './EaCHandlerCheckRequest.ts';
 
 export type EaCCommitCheckRequest =

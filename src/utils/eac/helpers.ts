@@ -6,7 +6,7 @@ import {
   EaCStatus,
   EaCStatusProcessingTypes,
   waitOnProcessing,
-} from '@fathym/eac/api';
+} from '@fathym/eac-api';
 import { EaCHandlerCheckRequest } from '../../../src/reqres/EaCHandlerCheckRequest.ts';
 import {
   EaCHandlerErrorResponse,

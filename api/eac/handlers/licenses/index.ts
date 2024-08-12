@@ -1,4 +1,4 @@
-import { respond } from '@fathym/common';
+
 import {
   EaCLicenseAsCode,
   EaCLicenseStripeDetails,
@@ -162,7 +162,7 @@ export default {
         }
       }
 
-      return respond({
+      return Response.json({
         Checks: [],
         Lookup: licLookup,
         Messages: {
@@ -173,7 +173,7 @@ export default {
     } catch (err) {
       console.error(err);
 
-      return respond({
+      return Response.json({
         HasError: true,
         Messages: {
           Error: JSON.stringify(err),

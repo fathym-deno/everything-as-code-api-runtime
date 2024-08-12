@@ -1,4 +1,4 @@
-import { respond } from '@fathym/common';
+
 import { EverythingAsCodeClouds } from '@fathym/eac';
 import { loadAzureCloudCredentials } from '@fathym/eac/azure';
 import { EaCRuntimeContext, EaCRuntimeHandlers } from '@fathym/eac/runtime';
@@ -30,7 +30,7 @@ export default {
 
     const authToken = await creds.getToken(scopes);
 
-    return respond({
+    return Response.json({
       Token: authToken.token,
     });
   },

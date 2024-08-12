@@ -10,7 +10,7 @@ import {
   EaCStatus,
   EaCStatusProcessingTypes,
   UserEaCRecord,
-} from '@fathym/eac/api';
+} from '@fathym/eac-api';
 import { eacHandlers } from '../../configs/eac-handlers.config.ts';
 import { EaCHandlerErrorResponse } from '../../src/reqres/EaCHandlerErrorResponse.ts';
 import { EaCHandlerCheckRequest } from '../../src/reqres/EaCHandlerCheckRequest.ts';

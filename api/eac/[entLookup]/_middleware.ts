@@ -1,6 +1,5 @@
-import { STATUS_CODE } from '$std/http/status.ts';
-import { respond } from '@fathym/common';
-import { UserEaCRecord } from '@fathym/eac/api';
+import { STATUS_CODE } from '@std/http/status';
+import { UserEaCRecord } from '@fathym/eac-api';
 import { EaCRuntimeContext, EaCRuntimeHandler } from '@fathym/eac/runtime';
 import { EaCAPIUserState } from '../../../src/state/EaCAPIUserState.ts';
 
@@ -13,7 +12,7 @@ export default (async (
     const entLookup = ctx.Params.entLookup!;
   
     if (entLookup !== ctx.State.EnterpriseLookup) {
-      return respond(
+      return Response.json(
         {
           Message:
             `The current JWT does not have access to the enterprise '${entLookup}'.`,
@@ -44,7 +43,7 @@ export default (async (
     }
   
     if (!userEaC?.value) {
-      return respond(
+      return Response.json(
         {
           Message: `You do not have access to the enterprise '${entLookup}'.`,
         },

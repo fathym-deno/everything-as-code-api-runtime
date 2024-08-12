@@ -1,4 +1,4 @@
-import { respond } from '@fathym/common';
+
 import {
   EaCCloudAsCode,
   EaCCloudAzureDetails,
@@ -86,7 +86,7 @@ export default {
         } as EaCCloudAzureDetails;
       }
 
-      return respond({
+      return Response.json({
         Checks: checks,
         Lookup: cloudLookup,
         Messages: {
@@ -97,7 +97,7 @@ export default {
     } catch (err) {
       console.error(err);
 
-      return respond({
+      return Response.json({
         HasError: true,
         Messages: {
           Error: JSON.stringify(err),

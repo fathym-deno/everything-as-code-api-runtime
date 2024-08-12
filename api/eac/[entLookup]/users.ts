@@ -1,7 +1,7 @@
-import { STATUS_CODE } from '$std/http/status.ts';
-import { respond } from '@fathym/common';
+import { STATUS_CODE } from '@std/http/status';
+
 import { EverythingAsCode } from '@fathym/eac';
-import { UserEaCRecord } from '@fathym/eac/api';
+import { UserEaCRecord } from '@fathym/eac-api';
 import { EaCRuntimeContext, EaCRuntimeHandlers } from '@fathym/eac/runtime';
 import { EaCAPIUserState } from '../../../src/state/EaCAPIUserState.ts';
 
@@ -21,7 +21,7 @@ export default {
       userEaCRecords.push(userEaCRecord.value);
     }
 
-    return respond(userEaCRecords);
+    return Response.json(userEaCRecords);
   },
 
   async POST(req, ctx: EaCRuntimeContext<EaCAPIUserState>) {
@@ -32,7 +32,7 @@ export default {
     userEaCRecord.EnterpriseLookup = entLookup;
 
     if (!userEaCRecord.EnterpriseLookup) {
-      return respond(
+      return Response.json(
         {
           Message: 'The enterprise lookup must be provided.',
         },
@@ -43,7 +43,7 @@ export default {
     }
 
     if (!userEaCRecord.Username) {
-      return respond(
+      return Response.json(
         {
           Message: 'The username must be provided.',
         },
@@ -62,7 +62,7 @@ export default {
     ]);
 
     if (!existingEaC.value) {
-      return respond(
+      return Response.json(
         {
           Message:
             'The enterprise must first be created before a user can be invited.',
@@ -86,7 +86,7 @@ export default {
 
     //  TODO: Send user invite email
 
-    return respond({
+    return Response.json({
       Message: `The user '${userEaCRecord.Username}' has been invited to enterprise '${userEaCRecord.EnterpriseLookup}'.`,
     });
   },

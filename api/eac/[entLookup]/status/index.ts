@@ -1,5 +1,4 @@
-import { respond } from '@fathym/common';
-import { EaCStatus, EaCStatusProcessingTypes } from '@fathym/eac/api';
+import { EaCStatus, EaCStatusProcessingTypes } from '@fathym/eac-api';
 import { EaCRuntimeContext, EaCRuntimeHandlers } from '@fathym/eac/runtime';
 import { EaCAPIUserState } from '../../../../src/state/EaCAPIUserState.ts';
 
@@ -42,6 +41,6 @@ export default {
       )
       .slice(0, take);
 
-    return respond(orderedStati);
+    return Response.json(orderedStati);
   },
 } as EaCRuntimeHandlers;

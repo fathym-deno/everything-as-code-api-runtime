@@ -1,4 +1,4 @@
-import { respond } from '@fathym/common';
+
 import {
   EaCSourceConnectionAsCode,
   EverythingAsCodeSources,
@@ -20,7 +20,7 @@ export default {
 
     const srcConn = handlerRequest.Model as EaCSourceConnectionAsCode;
 
-    return respond({
+    return Response.json({
       Checks: [],
       Lookup: srcConnLookup,
       Messages: {

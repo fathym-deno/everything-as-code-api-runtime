@@ -1,4 +1,4 @@
-import * as base64 from '$std/encoding/base64.ts';
+import * as base64 from '@std/encoding/base64';
 import {
   EaCGitHubAppProviderDetails,
   EaCSourceActionType,

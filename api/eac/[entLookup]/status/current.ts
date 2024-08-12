@@ -1,5 +1,4 @@
-import { respond } from '@fathym/common';
-import { EaCStatus, EaCStatusProcessingTypes } from '@fathym/eac/api';
+import { EaCStatus, EaCStatusProcessingTypes } from '@fathym/eac-api';
 import { EaCRuntimeContext, EaCRuntimeHandlers } from '@fathym/eac/runtime';
 import { EaCAPIUserState } from '../../../../src/state/EaCAPIUserState.ts';
 
@@ -25,6 +24,6 @@ export default {
       Username: 'system',
     };
 
-    return respond(status?.value! || idleStatus);
+    return Response.json(status?.value! || idleStatus);
   },
 } as EaCRuntimeHandlers;

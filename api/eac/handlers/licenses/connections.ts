@@ -1,4 +1,4 @@
-import { respond } from '@fathym/common';
+
 import {
   EaCIoTAsCode,
   EverythingAsCodeClouds,
@@ -12,7 +12,7 @@ import { loadIoTDevicesConnections } from '../../../../src/eac/iot.helpers.ts';
 
 export default {
   async POST(req, ctx: EaCRuntimeContext<EaCAPIUserState>) {
-    return respond({
+    return Response.json({
       Model: {},
     } as EaCHandlerConnectionsResponse);
   },

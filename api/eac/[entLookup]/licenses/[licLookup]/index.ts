@@ -2,11 +2,11 @@ import {
   EaCLicenseStripeDetails,
   EverythingAsCodeLicensing,
 } from '@fathym/eac';
-import { UserEaCLicense } from '@fathym/eac/api';
+import { UserEaCLicense } from '@fathym/eac-api';
 import { EaCRuntimeHandlers } from '@fathym/eac/runtime';
 import { Stripe } from 'npm:stripe';
 import { EaCAPIUserState } from '../../../../../src/state/EaCAPIUserState.ts';
-import { STATUS_CODE } from '$std/http/status.ts';
+import { STATUS_CODE } from '@std/http/status';
 import { eacGetSecrets, loadMainSecretClient } from '@fathym/eac/azure';
 
 export default {

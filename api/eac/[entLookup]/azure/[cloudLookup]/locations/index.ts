@@ -1,6 +1,6 @@
-import { respond } from '@fathym/common';
+
 import { EaCCloudAzureDetails, EverythingAsCodeClouds } from '@fathym/eac';
-import { EaCServiceDefinitions } from '@fathym/eac/api';
+import { EaCServiceDefinitions } from '@fathym/eac-api';
 import { loadAzureCloudCredentials } from '@fathym/eac/azure';
 import { EaCRuntimeContext, EaCRuntimeHandlers } from '@fathym/eac/runtime';
 import { ResourceManagementClient } from 'npm:@azure/arm-resources';
@@ -71,7 +71,7 @@ export default {
       }
     }
 
-    return respond({
+    return Response.json({
       Locations: locations,
     });
   },

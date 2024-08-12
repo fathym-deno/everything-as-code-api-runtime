@@ -1,5 +1,4 @@
-import { respond } from '@fathym/common';
-import { EaCStatus } from '@fathym/eac/api';
+import { EaCStatus } from '@fathym/eac-api';
 import { EaCRuntimeContext, EaCRuntimeHandlers } from '@fathym/eac/runtime';
 import { EaCAPIUserState } from '../../../../../src/state/EaCAPIUserState.ts';
 
@@ -19,6 +18,6 @@ export default {
       commitId,
     ]);
 
-    return respond(status?.value! || {});
+    return Response.json(status?.value! || {});
   },
 } as EaCRuntimeHandlers;

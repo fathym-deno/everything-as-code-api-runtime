@@ -1,7 +1,7 @@
-import { STATUS_CODE } from '$std/http/status.ts';
-import { respond } from '@fathym/common';
+import { STATUS_CODE } from '@std/http/status';
+
 import { EverythingAsCode, loadJwtConfig } from '@fathym/eac';
-import { UserEaCRecord } from '@fathym/eac/api';
+import { UserEaCRecord } from '@fathym/eac-api';
 import { EaCRuntimeContext, EaCRuntimeHandlers } from '@fathym/eac/runtime';
 import { EaCAPIState } from '../../src/state/EaCAPIState.ts';
 
@@ -10,7 +10,7 @@ export default {
     const parentEntLookup = ctx.State.EnterpriseLookup;
 
     if (!parentEntLookup) {
-      return respond(
+      return Response.json(
         {
           Message: `The provided JWT is invalid.`,
         },
@@ -41,7 +41,7 @@ export default {
     const eac = eacRes.value;
 
     if (eac?.ParentEnterpriseLookup !== parentEntLookup) {
-      return respond(
+      return Response.json(
         {
           Message: `You are not authorized to generate a JWT for this enterprise.`,
         },
@@ -59,7 +59,7 @@ export default {
     ]);
 
     if (!userEaC?.value) {
-      return respond(
+      return Response.json(
         {
           Message: `The requested user ${username} does not have access to the enterprise '${entLookup}'.`,
         },
@@ -77,7 +77,7 @@ export default {
       expTime
     );
 
-    return respond({
+    return Response.json({
       Token: jwt,
     });
   },

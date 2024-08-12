@@ -5,7 +5,7 @@ import {
   EaCCommitRequest,
   EaCStatus,
   EaCStatusProcessingTypes,
-} from '@fathym/eac/api';
+} from '@fathym/eac-api';
 import { EaCCommitCheckRequest } from '../../src/reqres/EaCCommitCheckRequest.ts';
 import { EaCHandlerCheckRequest } from '../../src/reqres/EaCHandlerCheckRequest.ts';
 import { EaCHandlerErrorResponse } from '../../src/reqres/EaCHandlerErrorResponse.ts';

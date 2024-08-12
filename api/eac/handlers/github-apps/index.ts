@@ -1,4 +1,4 @@
-import { respond } from '@fathym/common';
+
 import {
   EaCGitHubAppAsCode,
   EaCGitHubAppDetails,
@@ -25,7 +25,7 @@ export default {
 
     const gitHubApp = handlerRequest.Model as EaCGitHubAppAsCode;
 
-    return respond({
+    return Response.json({
       Checks: [],
       Lookup: gitHubAppLookup,
       Messages: {

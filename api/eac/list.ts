@@ -1,5 +1,5 @@
-import { respond } from '@fathym/common';
-import { UserEaCRecord } from '@fathym/eac/api';
+
+import { UserEaCRecord } from '@fathym/eac-api';
 import { EaCRuntimeContext, EaCRuntimeHandlers } from '@fathym/eac/runtime';
 import { EaCAPIState } from '../../src/state/EaCAPIState.ts';
 
@@ -38,6 +38,6 @@ export default {
 
     // const eacs = userEaCs.map((eac) => eac.value!);
 
-    return respond(userEaCRecords);
+    return Response.json(userEaCRecords);
   },
 } as EaCRuntimeHandlers;

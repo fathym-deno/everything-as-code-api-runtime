@@ -1,4 +1,4 @@
-import { respond } from '@fathym/common';
+
 import { EaCSecretAsCode, EverythingAsCode } from '@fathym/eac';
 import { eacGetSecrets, loadSecretClient } from '@fathym/eac/azure';
 import { EaCRuntimeContext, EaCRuntimeHandlers } from '@fathym/eac/runtime';
@@ -28,7 +28,7 @@ export default {
       Value: secretDef.Details?.Value || secret.Details!.Value!,
     });
 
-    return respond({
+    return Response.json({
       Model: {
         Details: {
           Value: secreted.Value,

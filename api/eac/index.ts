@@ -1,5 +1,5 @@
-import { STATUS_CODE } from '$std/http/status.ts';
-import { respond } from '@fathym/common';
+import { STATUS_CODE } from '@std/http/status';
+
 import { EverythingAsCode } from '@fathym/eac';
 import { enqueueAtomic } from '@fathym/eac/deno';
 import {
@@ -7,7 +7,7 @@ import {
   EaCCommitResponse,
   EaCStatus,
   EaCStatusProcessingTypes,
-} from '@fathym/eac/api';
+} from '@fathym/eac-api';
 import { EaCRuntimeContext, EaCRuntimeHandlers } from '@fathym/eac/runtime';
 import { eacExists } from '../../src/utils/eac/helpers.ts';
 import { EaCAPIState } from '../../src/state/EaCAPIState.ts';
@@ -56,7 +56,7 @@ export default {
     };
 
     if (!commitReq.EaC.EnterpriseLookup) {
-      return respond(
+      return Response.json(
         {
           Message: 'There was an issue creating a new EaC container.',
         },
@@ -67,7 +67,7 @@ export default {
     }
 
     if (!commitReq.EaC.Details?.Name) {
-      return respond(
+      return Response.json(
         {
           Message:
             'The name must be provided when creating a new EaC container.',
@@ -107,7 +107,7 @@ export default {
       `EaC container creation for ${eac.EnterpriseLookup} queued with Commit ID ${createStatus.ID}.`
     );
 
-    return respond({
+    return Response.json({
       CommitID: createStatus.ID,
       EnterpriseLookup: createStatus.EnterpriseLookup,
       Message: `The enterprise '${createStatus.EnterpriseLookup}' commit has been queued.`,

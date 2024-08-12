@@ -1,7 +1,7 @@
 import { merge, respond } from '@fathym/common';
 import { EaCCloudAzureDetails, EverythingAsCodeClouds } from '@fathym/eac';
 import { loadAzureCloudCredentials } from '@fathym/eac/azure';
-import { EaCServiceDefinitions } from '@fathym/eac/api';
+import { EaCServiceDefinitions } from '@fathym/eac-api';
 import { EaCRuntimeContext, EaCRuntimeHandlers } from '@fathym/eac/runtime';
 import { ResourceManagementClient } from 'npm:@azure/arm-resources';
 import { EaCAPIUserState } from '../../../../../../src/state/EaCAPIUserState.ts';
@@ -75,6 +75,6 @@ export default {
       );
     }
 
-    return respond(svcDefApiVersions);
+    return Response.json(svcDefApiVersions);
   },
 } as EaCRuntimeHandlers;

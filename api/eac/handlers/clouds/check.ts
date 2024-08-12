@@ -1,4 +1,4 @@
-import { respond } from '@fathym/common';
+
 import { EaCCloudAzureDetails, EverythingAsCodeClouds } from '@fathym/eac';
 import { EaCRuntimeContext, EaCRuntimeHandlers } from '@fathym/eac/runtime';
 import { EaCAPIUserState } from '../../../../src/state/EaCAPIUserState.ts';
@@ -61,7 +61,7 @@ export default {
         );
       }
 
-      return respond({
+      return Response.json({
         Complete: complete,
         HasError: hasError,
         Messages: deployDetails.Messages,
@@ -69,7 +69,7 @@ export default {
     } catch (err) {
       console.error(err);
 
-      return respond({
+      return Response.json({
         CorelationID: checkRequest.CorelationID,
         Complete: true,
         HasError: true,

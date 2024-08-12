@@ -4,7 +4,7 @@ import {
   EaCStatus,
   EaCStatusProcessingTypes,
   UserEaCRecord,
-} from '@fathym/eac/api';
+} from '@fathym/eac-api';
 import { listenQueueAtomic } from '@fathym/eac/deno';
 import { EaCDeleteRequest } from '../../src/reqres/EaCDeleteRequest.ts';
 import {

@@ -1,4 +1,4 @@
-import { respond } from '@fathym/common';
+
 import {
   EaCIoTAsCode,
   EverythingAsCodeClouds,
@@ -27,7 +27,7 @@ export default {
       deviceLookups = Object.keys(iot.Devices || {});
     }
 
-    return respond({
+    return Response.json({
       Model: {
         Devices: await loadIoTDevicesConnections(
           eac,

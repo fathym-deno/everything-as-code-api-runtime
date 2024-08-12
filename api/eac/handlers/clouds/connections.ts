@@ -1,4 +1,4 @@
-import { respond } from '@fathym/common';
+
 import { EaCCloudAsCode } from '@fathym/eac';
 import { deconstructCloudDetailsSecrets } from '@fathym/eac/azure';
 import { EaCRuntimeContext, EaCRuntimeHandlers } from '@fathym/eac/runtime';
@@ -23,7 +23,7 @@ export default {
 
     cloud.Details = await deconstructCloudDetailsSecrets(cloud.Details);
 
-    return respond({
+    return Response.json({
       Model: {
         ResourceGroups: await loadCloudResourceGroupsConnections(
           cloud,

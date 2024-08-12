@@ -1,4 +1,4 @@
-import { respond } from '@fathym/common';
+
 import {
   EaCGitHubAppDetails,
   EaCGitHubAppProviderDetails,
@@ -97,7 +97,7 @@ export default {
       err.toString();
     }
 
-    return respond({
+    return Response.json({
       Model: {
         Organizations: organizations,
       } as EaCSourceConnectionAsCode,

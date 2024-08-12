@@ -1,4 +1,4 @@
-import { respond } from '@fathym/common';
+
 import { EaCRuntimeContext, EaCRuntimeHandlers } from '@fathym/eac/runtime';
 import { EaCAPIUserState } from '../../../../src/state/EaCAPIUserState.ts';
 import { EaCHandlerCheckRequest } from '../../../../src/reqres/EaCHandlerCheckRequest.ts';
@@ -10,7 +10,7 @@ export default {
 
     console.log(`Processing EaC commit ${checkRequest.CommitID} Source checks`);
 
-    return respond({
+    return Response.json({
       CorelationID: checkRequest.CorelationID,
       Complete: true,
       HasError: false,

@@ -1,4 +1,4 @@
-import { UserEaCLicense } from '@fathym/eac/api';
+import { UserEaCLicense } from '@fathym/eac-api';
 import { EaCRuntimeHandlers } from '@fathym/eac/runtime';
 import { EaCAPIUserState } from '../../../../src/state/EaCAPIUserState.ts';
 

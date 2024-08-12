@@ -60,7 +60,7 @@ export default {
       });
     }
 
-    return respond({
+    return Response.json({
       Checks: [],
       Lookup: secretLookup,
       Messages: {

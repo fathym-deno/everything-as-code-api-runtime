@@ -1,4 +1,4 @@
-import { respond } from '@fathym/common';
+
 import { EaCRuntimeContext, EaCRuntimeHandlers } from '@fathym/eac/runtime';
 import { EaCAPIUserState } from '../../../../src/state/EaCAPIUserState.ts';
 import { EaCHandlerConnectionsRequest } from '../../../../src/reqres/EaCHandlerConnectionsRequest.ts';
@@ -7,7 +7,7 @@ import { EaCHandlerConnectionsResponse } from '../../../../src/reqres/EaCHandler
 
 export default {
   async POST(req, ctx: EaCRuntimeContext<EaCAPIUserState>) {
-    return respond({
+    return Response.json({
       Model: {} as EaCDevOpsActionAsCode,
     } as EaCHandlerConnectionsResponse);
   },
