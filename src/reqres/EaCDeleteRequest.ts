@@ -1,12 +1,13 @@
-import { EverythingAsCode } from '@fathym/eac';
+import { type NullableArrayOrObject } from '@fathym/common/types';
 import { DenoKVNonce } from '@fathym/common/deno-kv';
+import { EverythingAsCode } from '@fathym/eac';
 
-export type EaCDeleteRequest = {
+export type EaCDeleteRequest<TEaC = EverythingAsCode> = {
   Archive: boolean;
 
   CommitID: string;
 
-  EaC: EverythingAsCode;
+  EaC: NullableArrayOrObject<TEaC>;
 
   JWT: string;
 
