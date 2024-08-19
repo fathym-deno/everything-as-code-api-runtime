@@ -1,5 +1,5 @@
-import { loadAzureCredentialsForToken } from '@fathym/eac/azure';
-import { EaCRuntimeContext, EaCRuntimeHandlers } from '@fathym/eac/runtime';
+import { loadAzureCredentialsForToken } from '@fathym/eac/utils/azure';
+import { EaCRuntimeContext, EaCRuntimeHandlers } from '@fathym/eac-runtime';
 import {
   TenantIdDescription,
   SubscriptionClient,

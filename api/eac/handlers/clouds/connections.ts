@@ -1,7 +1,7 @@
 
-import { EaCCloudAsCode } from '@fathym/eac';
-import { deconstructCloudDetailsSecrets } from '@fathym/eac/azure';
-import { EaCRuntimeContext, EaCRuntimeHandlers } from '@fathym/eac/runtime';
+import { EaCCloudAsCode } from '@fathym/eac/clouds';
+import { deconstructCloudDetailsSecrets } from '@fathym/eac/utils/azure';
+import { EaCRuntimeContext, EaCRuntimeHandlers } from '@fathym/eac-runtime';
 import { EaCAPIUserState } from '../../../../src/state/EaCAPIUserState.ts';
 import { EaCHandlerConnectionsRequest } from '../../../../src/reqres/EaCHandlerConnectionsRequest.ts';
 import { EaCHandlerConnectionsResponse } from '../../../../src/reqres/EaCHandlerConnectionsResponse.ts';

@@ -1,16 +1,13 @@
-
+import { EverythingAsCodeClouds } from '@fathym/eac/clouds';
+import { EverythingAsCodeGitHub } from '@fathym/eac/github';
 import {
-  EaCGitHubAppDetails,
   EaCGitHubAppProviderDetails,
-  EaCSourceConnectionAsCode,
-  EverythingAsCodeClouds,
-  EverythingAsCodeGitHub,
   EverythingAsCodeIdentity,
-  EverythingAsCodeSources,
-} from '@fathym/eac';
-import { eacGetSecrets, loadSecretClient } from '@fathym/eac/azure';
+} from '@fathym/eac/identity';
+import { EaCSourceConnectionAsCode, EverythingAsCodeSources } from '@fathym/eac/sources';
+import { eacGetSecrets, loadSecretClient } from '@fathym/eac/utils/azure';
 import { SimpleUser, loadOctokit } from '@fathym/eac/octokit';
-import { EaCRuntimeContext, EaCRuntimeHandlers } from '@fathym/eac/runtime';
+import { EaCRuntimeContext, EaCRuntimeHandlers } from '@fathym/eac-runtime';
 import { EaCAPIUserState } from '../../../../src/state/EaCAPIUserState.ts';
 import { EaCHandlerConnectionsRequest } from '../../../../src/reqres/EaCHandlerConnectionsRequest.ts';
 import { EaCHandlerConnectionsResponse } from '../../../../src/reqres/EaCHandlerConnectionsResponse.ts';
@@ -83,7 +80,11 @@ export default {
     }`;
 
     try {
-      const octokit = await loadOctokit(providerDetails, gitHubApp.Details!, sourceConn.Details!);
+      const octokit = await loadOctokit(
+        providerDetails,
+        gitHubApp.Details!,
+        sourceConn.Details!
+      );
 
       const installs =
         await octokit.rest.apps.listInstallationsForAuthenticatedUser();

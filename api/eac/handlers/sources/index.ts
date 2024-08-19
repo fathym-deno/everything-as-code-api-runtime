@@ -1,17 +1,18 @@
 import { delay } from '@std/async/delay';
 
+import { EverythingAsCode } from '@fathym/eac';
+import { EverythingAsCodeGitHub } from '@fathym/eac/github';
 import {
-  EaCGitHubAppDetails,
   EaCGitHubAppProviderDetails,
+  EverythingAsCodeIdentity,
+} from '@fathym/eac/identity';
+import {
   EaCSourceActionType,
   EaCSourceAsCode,
-  EverythingAsCode,
-  EverythingAsCodeGitHub,
-  EverythingAsCodeIdentity,
   EverythingAsCodeSources,
-} from '@fathym/eac';
-import { eacGetSecrets, loadSecretClient } from '@fathym/eac/azure';
-import { EaCRuntimeContext, EaCRuntimeHandlers } from '@fathym/eac/runtime';
+} from '@fathym/eac/sources';
+import { eacGetSecrets, loadSecretClient } from '@fathym/eac/utils/azure';
+import { EaCRuntimeContext, EaCRuntimeHandlers } from '@fathym/eac-runtime';
 import { EaCAPIUserState } from '../../../../src/state/EaCAPIUserState.ts';
 import { EaCHandlerRequest } from '../../../../src/reqres/EaCHandlerRequest.ts';
 import {

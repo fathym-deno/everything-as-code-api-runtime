@@ -1,6 +1,6 @@
 
-import { EaCGitHubAppAsCode, EverythingAsCodeGitHub } from '@fathym/eac';
-import { EaCRuntimeContext, EaCRuntimeHandlers } from '@fathym/eac/runtime';
+import { EaCGitHubAppAsCode, EverythingAsCodeGitHub } from '@fathym/eac/github';
+import { EaCRuntimeContext, EaCRuntimeHandlers } from '@fathym/eac-runtime';
 import { EaCAPIUserState } from '../../../../src/state/EaCAPIUserState.ts';
 import { EaCHandlerConnectionsRequest } from '../../../../src/reqres/EaCHandlerConnectionsRequest.ts';
 import { EaCHandlerConnectionsResponse } from '../../../../src/reqres/EaCHandlerConnectionsResponse.ts';

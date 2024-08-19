@@ -1,5 +1,5 @@
 import { EverythingAsCode } from '@fathym/eac';
-import { DenoKVNonce } from '@fathym/eac/deno';
+import { DenoKVNonce } from '@fathym/common/deno-kv';
 
 export type EaCDeleteRequest = {
   Archive: boolean;

@@ -10,12 +10,12 @@ import {
   EaCCloudResourceGroupDetails,
   EaCCloudRoleAssignment,
   EverythingAsCodeClouds,
-} from '@fathym/eac';
+} from '@fathym/eac/clouds';
 import {
   loadAzureCloudCredentials,
   loadMainAzureCredentials,
   loadResoureTypeApiVersions,
-} from '@fathym/eac/azure';
+} from '@fathym/eac/utils/azure';
 import { AuthorizationManagementClient } from 'npm:@azure/arm-authorization';
 import {
   Deployment,

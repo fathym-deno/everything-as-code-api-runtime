@@ -1,8 +1,9 @@
 import { STATUS_CODE } from '@std/http/status';
 
-import { EverythingAsCode, loadJwtConfig } from '@fathym/eac';
+import { loadJwtConfig } from '@fathym/common/jwt';
+import { EverythingAsCode } from '@fathym/eac';
 import { UserEaCRecord } from '@fathym/eac-api';
-import { EaCRuntimeContext, EaCRuntimeHandlers } from '@fathym/eac/runtime';
+import { EaCRuntimeContext, EaCRuntimeHandlers } from '@fathym/eac-runtime';
 import { EaCAPIState } from '../../src/state/EaCAPIState.ts';
 
 export default {

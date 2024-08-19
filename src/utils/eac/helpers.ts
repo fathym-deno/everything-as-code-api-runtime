@@ -1,12 +1,13 @@
 import { merge } from '@fathym/common';
-import { EaCHandler, EaCHandlers, EaCMetadataBase, EverythingAsCode } from '@fathym/eac';
-import { hasKvEntry } from '@fathym/eac/deno';
 import {
-  EaCCommitRequest,
-  EaCStatus,
-  EaCStatusProcessingTypes,
-  waitOnProcessing,
-} from '@fathym/eac-api';
+  EaCMetadataBase,
+  EaCModuleHandler,
+  EaCModuleHandlers,
+  EverythingAsCode,
+} from '@fathym/eac';
+import { hasKvEntry } from '@fathym/common/deno-kv';
+import { EaCCommitRequest, EaCStatus, EaCStatusProcessingTypes } from '@fathym/eac-api';
+import { waitOnProcessing } from '@fathym/eac-api/status';
 import { EaCHandlerCheckRequest } from '../../../src/reqres/EaCHandlerCheckRequest.ts';
 import {
   EaCHandlerErrorResponse,
@@ -23,7 +24,7 @@ import { EaCHandlerConnectionsResponse } from '../../../src/reqres/EaCHandlerCon
 
 export async function callEaCHandler<T extends EaCMetadataBase>(
   loadEac: (entLookup: string) => Promise<EverythingAsCode>,
-  handler: EaCHandler,
+  handler: EaCModuleHandler,
   commitReq: EaCCommitRequest,
   key: string,
   currentEaC: EverythingAsCode,
@@ -131,7 +132,7 @@ export async function callEaCHandler<T extends EaCMetadataBase>(
 
 export async function callEaCHandlerCheck(
   loadEaC: (entLookup: string) => Promise<EverythingAsCode>,
-  handlers: EaCHandlers,
+  handlers: EaCModuleHandlers,
   jwt: string,
   req: EaCHandlerCheckRequest,
 ): Promise<EaCHandlerCheckResponse> {
@@ -162,7 +163,7 @@ export async function callEaCHandlerCheck(
 
 export async function callEaCHandlerConnections(
   loadEaC: (entLookup: string) => Promise<EverythingAsCode>,
-  handler: EaCHandler,
+  handler: EaCModuleHandler,
   jwt: string,
   req: EaCHandlerConnectionsRequest,
 ): Promise<EaCHandlerConnectionsResponse> {

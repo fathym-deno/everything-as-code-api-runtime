@@ -1,5 +1,5 @@
 import { EaCStatus } from '@fathym/eac-api';
-import { EaCRuntimeContext, EaCRuntimeHandlers } from '@fathym/eac/runtime';
+import { EaCRuntimeContext, EaCRuntimeHandlers } from '@fathym/eac-runtime';
 import { EaCAPIUserState } from '../../../../../src/state/EaCAPIUserState.ts';
 
 export default {

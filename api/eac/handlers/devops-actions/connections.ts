@@ -1,8 +1,6 @@
-
-import { EaCRuntimeContext, EaCRuntimeHandlers } from '@fathym/eac/runtime';
+import { EaCRuntimeContext, EaCRuntimeHandlers } from '@fathym/eac-runtime';
+import { EaCDevOpsActionAsCode } from '@fathym/eac/sources';
 import { EaCAPIUserState } from '../../../../src/state/EaCAPIUserState.ts';
-import { EaCHandlerConnectionsRequest } from '../../../../src/reqres/EaCHandlerConnectionsRequest.ts';
-import { EaCDevOpsActionAsCode, EverythingAsCodeClouds, EverythingAsCodeSources } from '@fathym/eac';
 import { EaCHandlerConnectionsResponse } from '../../../../src/reqres/EaCHandlerConnectionsResponse.ts';
 
 export default {

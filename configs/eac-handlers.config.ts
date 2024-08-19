@@ -1,6 +1,6 @@
-import { EaCHandlers } from '@fathym/eac';
+import { EaCModuleHandlers } from '@fathym/eac';
 
-export const eacHandlers: EaCHandlers = {
+export const eacHandlers: EaCModuleHandlers = {
   Clouds: {
     APIPath: 'http://localhost:6130/api/eac/handlers/clouds',
     Order: 100,

@@ -1,6 +1,9 @@
 import { merge } from '@fathym/common';
 import { EverythingAsCode } from '@fathym/eac';
-import { enqueueAtomicOperation, listenQueueAtomic } from '@fathym/eac/deno';
+import {
+  enqueueAtomicOperation,
+  listenQueueAtomic,
+} from '@fathym/common/deno-kv';
 import {
   EaCCommitRequest,
   EaCStatus,

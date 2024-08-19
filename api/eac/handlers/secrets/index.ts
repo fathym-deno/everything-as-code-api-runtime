@@ -1,11 +1,13 @@
-import { merge, respond } from '@fathym/common';
+import { merge } from '@fathym/common';
+import {
+  EverythingAsCode,
+} from '@fathym/eac';
 import {
   EaCSecretAsCode,
-  EverythingAsCode,
   EverythingAsCodeClouds,
-} from '@fathym/eac';
-import { eacSetSecrets, loadSecretClient } from '@fathym/eac/azure';
-import { EaCRuntimeContext, EaCRuntimeHandlers } from '@fathym/eac/runtime';
+} from '@fathym/eac/clouds';
+import { eacSetSecrets, loadSecretClient } from '@fathym/eac/utils/azure';
+import { EaCRuntimeContext, EaCRuntimeHandlers } from '@fathym/eac-runtime';
 import { EaCHandlerResponse } from '../../../../src/reqres/EaCHandlerResponse.ts';
 import { resolveDynamicValues } from '../../../../src/utils/eac/resolveDynamicValues.ts';
 import { EaCHandlerRequest } from '../../../../src/reqres/EaCHandlerRequest.ts';

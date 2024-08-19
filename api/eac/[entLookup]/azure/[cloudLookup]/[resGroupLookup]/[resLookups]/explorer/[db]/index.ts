@@ -1,8 +1,8 @@
 
-import { EverythingAsCodeClouds } from '@fathym/eac';
-import { loadKustoClient } from '@fathym/eac/azure';
+import { EverythingAsCodeClouds } from '@fathym/eac/clouds';
+import { loadKustoClient } from '@fathym/eac/utils/azure';
 import { ExplorerRequest } from '@fathym/eac-api';
-import { EaCRuntimeContext, EaCRuntimeHandlers } from '@fathym/eac/runtime';
+import { EaCRuntimeContext, EaCRuntimeHandlers } from '@fathym/eac-runtime';
 import { EaCAPIUserState } from '../../../../../../../../../src/state/EaCAPIUserState.ts';
 
 export default {

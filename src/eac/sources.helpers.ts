@@ -1,13 +1,14 @@
 import * as base64 from '@std/encoding/base64';
+import { EverythingAsCode } from '@fathym/eac';
+import { EverythingAsCodeClouds } from '@fathym/eac/clouds';
+import { EaCGitHubAppProviderDetails } from '@fathym/eac/identity';
 import {
-  EaCGitHubAppProviderDetails,
   EaCSourceActionType,
   EaCSourceAsCode,
   EaCSourceConnectionAsCode,
-  EverythingAsCode,
   EverythingAsCodeSources,
-} from '@fathym/eac';
-import { eacGetSecrets, loadSecretClient } from '@fathym/eac/azure';
+} from '@fathym/eac/sources';
+import { eacGetSecrets, loadSecretClient } from '@fathym/eac/utils/azure';
 import {
   configureRepository,
   ContentFile,
@@ -73,7 +74,8 @@ export async function ensureSource(
           name: source.Details!.Repository!,
         });
 
-        repository = tempResp.data!;
+        // deno-lint-ignore no-explicit-any
+        repository = tempResp.data! as any;
 
         break;
       }
@@ -181,7 +183,7 @@ export async function ensureSourceArtifacts(
 }
 
 export async function ensureSourceSecrets(
-  eac: EverythingAsCode,
+  eac: EverythingAsCodeClouds,
   providerDetails: EaCGitHubAppProviderDetails,
   connection: EaCSourceConnectionAsCode,
   currentSource: EaCSourceAsCode,

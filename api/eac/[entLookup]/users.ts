@@ -2,7 +2,7 @@ import { STATUS_CODE } from '@std/http/status';
 
 import { EverythingAsCode } from '@fathym/eac';
 import { UserEaCRecord } from '@fathym/eac-api';
-import { EaCRuntimeContext, EaCRuntimeHandlers } from '@fathym/eac/runtime';
+import { EaCRuntimeContext, EaCRuntimeHandlers } from '@fathym/eac-runtime';
 import { EaCAPIUserState } from '../../../src/state/EaCAPIUserState.ts';
 
 export default {

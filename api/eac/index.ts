@@ -1,14 +1,14 @@
 import { STATUS_CODE } from '@std/http/status';
 
 import { EverythingAsCode } from '@fathym/eac';
-import { enqueueAtomic } from '@fathym/eac/deno';
+import { enqueueAtomic } from '@fathym/common/deno-kv';
 import {
   EaCCommitRequest,
   EaCCommitResponse,
   EaCStatus,
   EaCStatusProcessingTypes,
 } from '@fathym/eac-api';
-import { EaCRuntimeContext, EaCRuntimeHandlers } from '@fathym/eac/runtime';
+import { EaCRuntimeContext, EaCRuntimeHandlers } from '@fathym/eac-runtime';
 import { eacExists } from '../../src/utils/eac/helpers.ts';
 import { EaCAPIState } from '../../src/state/EaCAPIState.ts';
 

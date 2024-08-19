@@ -1,16 +1,15 @@
-
 import {
   EaCLicenseAsCode,
   EaCLicenseStripeDetails,
   EverythingAsCodeLicensing,
-} from '@fathym/eac';
-import { EaCRuntimeContext, EaCRuntimeHandlers } from '@fathym/eac/runtime';
+} from '@fathym/eac/licensing';
+import { EaCRuntimeContext, EaCRuntimeHandlers } from '@fathym/eac-runtime';
+import { eacSetSecrets, loadMainSecretClient } from '@fathym/eac/utils/azure';
 import { Stripe } from 'npm:stripe';
 import { EaCHandlerErrorResponse } from '../../../../src/reqres/EaCHandlerErrorResponse.ts';
 import { EaCHandlerResponse } from '../../../../src/reqres/EaCHandlerResponse.ts';
 import { EaCHandlerRequest } from '../../../../src/reqres/EaCHandlerRequest.ts';
 import { EaCAPIUserState } from '../../../../src/state/EaCAPIUserState.ts';
-import { eacSetSecrets, loadMainSecretClient } from '@fathym/eac/azure';
 
 export default {
   async POST(req, ctx: EaCRuntimeContext<EaCAPIUserState>) {
@@ -31,11 +30,11 @@ export default {
 
       const license = handlerRequest.Model as EaCLicenseAsCode;
 
-      const licDetails: EaCLicenseStripeDetails =
-        license.Details || current.Details!;
+      const licDetails = (license.Details ||
+        current.Details!) as EaCLicenseStripeDetails;
 
       if (licDetails) {
-        const stripe = (Stripe as any)(licDetails.SecretKey)!;
+        const stripe = (Stripe as any)(licDetails.SecretKey)! as Stripe;
 
         const products = await stripe.products.list();
 
@@ -53,7 +52,7 @@ export default {
                 ? `${license.Details!.Name} - ${
                     eacPlan.Details?.Name || productId
                   }`
-                : undefined,
+                : 'undefined',
               description: eacPlan.Details?.Description || undefined,
               active: true,
               type: 'service',

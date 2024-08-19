@@ -1,6 +1,6 @@
 
-import { EaCCloudAzureDetails, EverythingAsCodeClouds } from '@fathym/eac';
-import { EaCRuntimeContext, EaCRuntimeHandlers } from '@fathym/eac/runtime';
+import { EaCCloudAzureDetails, EverythingAsCodeClouds } from '@fathym/eac/clouds';
+import { EaCRuntimeContext, EaCRuntimeHandlers } from '@fathym/eac-runtime';
 import { EaCAPIUserState } from '../../../../src/state/EaCAPIUserState.ts';
 import { EaCHandlerCloudCheckRequest } from '../../../../src/reqres/EaCHandlerCloudCheckRequest.ts';
 import {
@@ -8,7 +8,7 @@ import {
   loadDeploymentDetails,
 } from '../../../../src/eac/clouds.helpers.ts';
 import { EaCHandlerCheckResponse } from '../../../../src/reqres/EaCHandlerCheckResponse.ts';
-import { loadAzureCloudCredentials } from '@fathym/eac/azure';
+import { loadAzureCloudCredentials } from '@fathym/eac/utils/azure';
 
 export default {
   async POST(req, ctx: EaCRuntimeContext<EaCAPIUserState>) {

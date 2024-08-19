@@ -1,5 +1,5 @@
 import { isEaCCommitRequest } from '@fathym/eac-api';
-import { EaCRuntime, IS_BUILDING } from '@fathym/eac/runtime';
+import { EaCRuntime, IS_BUILDING } from '@fathym/eac-runtime';
 import { isEaCCommitCheckRequest } from '../../src/reqres/EaCCommitCheckRequest.ts';
 import { isEaCDeleteRequest } from '../../src/reqres/EaCDeleteRequest.ts';
 import { handleEaCCommitCheckRequest } from './commit-check.handler.ts';

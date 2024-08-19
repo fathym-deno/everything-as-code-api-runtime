@@ -1,6 +1,6 @@
 import { STATUS_CODE } from '@std/http/status';
 import { UserEaCRecord } from '@fathym/eac-api';
-import { EaCRuntimeContext, EaCRuntimeHandler } from '@fathym/eac/runtime';
+import { EaCRuntimeContext, EaCRuntimeHandler } from '@fathym/eac-runtime';
 import { EaCAPIUserState } from '../../../src/state/EaCAPIUserState.ts';
 
 export default (async (

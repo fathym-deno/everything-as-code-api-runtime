@@ -1,8 +1,8 @@
 
-import { EaCCloudAzureDetails, EverythingAsCodeClouds } from '@fathym/eac';
-import { loadAzureCloudCredentials } from '@fathym/eac/azure';
+import { EaCCloudAzureDetails, EverythingAsCodeClouds } from '@fathym/eac/clouds';
+import { loadAzureCloudCredentials } from '@fathym/eac/utils/azure';
 import { EaCServiceDefinitions } from '@fathym/eac-api';
-import { EaCRuntimeContext, EaCRuntimeHandlers } from '@fathym/eac/runtime';
+import { EaCRuntimeContext, EaCRuntimeHandlers } from '@fathym/eac-runtime';
 import { Provider, ResourceManagementClient } from 'npm:@azure/arm-resources';
 import { EaCAPIUserState } from '../../../../../../src/state/EaCAPIUserState.ts';
 

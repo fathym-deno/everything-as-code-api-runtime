@@ -1,16 +1,16 @@
 import {
   EaCAPIProcessor,
-  EaCDenoKVDatabaseDetails,
   EaCJWTValidationModifierDetails,
   EaCKeepAliveModifierDetails,
-  EaCLocalDistributedFileSystem,
-} from '@fathym/eac';
+} from '@fathym/eac/applications';
+import { EaCDenoKVDatabaseDetails } from '@fathym/eac/databases';
+import { EaCLocalDistributedFileSystem } from '@fathym/eac/dfs';
 import {
   EaCRuntimeConfig,
   EaCRuntimePlugin,
   EaCRuntimePluginConfig,
   FathymAzureContainerCheckPlugin,
-} from '@fathym/eac/runtime';
+} from '@fathym/eac-runtime';
 
 export default class EaCAPIPlugin implements EaCRuntimePlugin {
   constructor() {}

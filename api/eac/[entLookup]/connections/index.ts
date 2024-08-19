@@ -1,5 +1,5 @@
 import { EaCMetadataBase, EverythingAsCode } from '@fathym/eac';
-import { EaCRuntimeContext, EaCRuntimeHandlers } from '@fathym/eac/runtime';
+import { EaCRuntimeContext, EaCRuntimeHandlers } from '@fathym/eac-runtime';
 import { EaCAPIUserState } from '../../../../src/state/EaCAPIUserState.ts';
 import { loadConnections } from '../../../../src/utils/eac/loadConnections.ts';
 

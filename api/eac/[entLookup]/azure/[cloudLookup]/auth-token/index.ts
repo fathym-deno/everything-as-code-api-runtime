@@ -1,7 +1,7 @@
 
-import { EverythingAsCodeClouds } from '@fathym/eac';
-import { loadAzureCloudCredentials } from '@fathym/eac/azure';
-import { EaCRuntimeContext, EaCRuntimeHandlers } from '@fathym/eac/runtime';
+import { EverythingAsCodeClouds } from '@fathym/eac/clouds';
+import { loadAzureCloudCredentials } from '@fathym/eac/utils/azure';
+import { EaCRuntimeContext, EaCRuntimeHandlers } from '@fathym/eac-runtime';
 import { EaCAPIUserState } from '../../../../../../src/state/EaCAPIUserState.ts';
 
 export default {
@@ -31,7 +31,7 @@ export default {
     const authToken = await creds.getToken(scopes);
 
     return Response.json({
-      Token: authToken.token,
+      Token: authToken?.token,
     });
   },
 } as EaCRuntimeHandlers;

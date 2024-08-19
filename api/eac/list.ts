@@ -1,6 +1,6 @@
 
 import { UserEaCRecord } from '@fathym/eac-api';
-import { EaCRuntimeContext, EaCRuntimeHandlers } from '@fathym/eac/runtime';
+import { EaCRuntimeContext, EaCRuntimeHandlers } from '@fathym/eac-runtime';
 import { EaCAPIState } from '../../src/state/EaCAPIState.ts';
 
 export default {

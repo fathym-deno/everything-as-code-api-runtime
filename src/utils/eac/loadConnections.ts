@@ -1,10 +1,10 @@
-import { EaCHandler, EaCMetadataBase, EverythingAsCode } from '@fathym/eac';
+import { EaCMetadataBase, EaCModuleHandler, EverythingAsCode } from '@fathym/eac';
 import { callEaCHandlerConnections } from './helpers.ts';
 
 export async function loadConnections(
   denoKv: Deno.Kv,
   currentEaC: EverythingAsCode,
-  handler: EaCHandler,
+  handler: EaCModuleHandler,
   jwt: string,
   def: Record<string, EaCMetadataBase>,
   current: Record<string, EaCMetadataBase>,

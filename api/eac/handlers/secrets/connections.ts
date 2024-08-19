@@ -1,7 +1,7 @@
-
-import { EaCSecretAsCode, EverythingAsCode } from '@fathym/eac';
-import { eacGetSecrets, loadSecretClient } from '@fathym/eac/azure';
-import { EaCRuntimeContext, EaCRuntimeHandlers } from '@fathym/eac/runtime';
+import { EverythingAsCode } from '@fathym/eac';
+import { EaCSecretAsCode } from '@fathym/eac/clouds';
+import { eacGetSecrets, loadSecretClient } from '@fathym/eac/utils/azure';
+import { EaCRuntimeContext, EaCRuntimeHandlers } from '@fathym/eac-runtime';
 import { EaCHandlerConnectionsResponse } from '../../../../src/reqres/EaCHandlerConnectionsResponse.ts';
 import { EaCHandlerConnectionsRequest } from '../../../../src/reqres/EaCHandlerConnectionsRequest.ts';
 import { EaCAPIUserState } from '../../../../src/state/EaCAPIUserState.ts';

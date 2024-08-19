@@ -1,10 +1,6 @@
-
-import {
-  EaCIoTAsCode,
-  EverythingAsCodeClouds,
-  EverythingAsCodeIoT,
-} from '@fathym/eac';
-import { EaCRuntimeContext, EaCRuntimeHandlers } from '@fathym/eac/runtime';
+import { EverythingAsCodeClouds } from '@fathym/eac/clouds';
+import { EaCIoTAsCode, EverythingAsCodeIoT } from '@fathym/eac/iot';
+import { EaCRuntimeContext, EaCRuntimeHandlers } from '@fathym/eac-runtime';
 import { EaCHandlerErrorResponse } from '../../../../src/reqres/EaCHandlerErrorResponse.ts';
 import { EaCHandlerResponse } from '../../../../src/reqres/EaCHandlerResponse.ts';
 import { EaCHandlerRequest } from '../../../../src/reqres/EaCHandlerRequest.ts';

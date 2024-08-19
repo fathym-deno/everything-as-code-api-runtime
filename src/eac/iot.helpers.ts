@@ -1,13 +1,11 @@
+import { EaCCloudAsCode, EaCCloudAzureDetails, EverythingAsCodeClouds } from '@fathym/eac/clouds';
 import {
-  EaCCloudAsCode,
-  EaCCloudAzureDetails,
   EaCDeviceAsCode,
   EaCDeviceDetails,
   EaCIoTAsCode,
-  EverythingAsCodeClouds,
   EverythingAsCodeIoT,
-} from '@fathym/eac';
-import { loadAzureCloudCredentials } from '@fathym/eac/azure';
+} from '@fathym/eac/iot';
+import { loadAzureCloudCredentials } from '@fathym/eac/utils/azure';
 import { IotHubClient } from 'npm:@azure/arm-iothub';
 import { Registry as IoTRegistry } from 'npm:azure-iothub';
 import { EnsureIoTDevicesResponse } from '../reqres/EnsureIoTDevicesResponse.ts';

@@ -1,10 +1,10 @@
 import { merge } from '@fathym/common';
-import { EaCHandler, EaCMetadataBase, EverythingAsCode } from '@fathym/eac';
+import { EaCModuleHandler, EaCMetadataBase, EverythingAsCode } from '@fathym/eac';
 import {
   AtomicOperationHandler,
   enqueueAtomicOperation,
   listenQueueAtomic,
-} from '@fathym/eac/deno';
+} from '@fathym/common/deno-kv';
 import {
   EaCCommitRequest,
   EaCStatus,
@@ -294,7 +294,7 @@ function processDiffKey(
 function processEaCHandler(
   denoKv: Deno.Kv,
   diff: unknown,
-  handler: EaCHandler,
+  handler: EaCModuleHandler,
   commitReq: EaCCommitRequest,
   key: string,
   saveEaC: EverythingAsCode,

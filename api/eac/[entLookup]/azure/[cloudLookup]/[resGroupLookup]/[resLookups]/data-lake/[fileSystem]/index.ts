@@ -1,6 +1,6 @@
-import { EverythingAsCodeClouds } from '@fathym/eac';
-import { loadDataLakeClient } from '@fathym/eac/azure';
-import { EaCRuntimeContext, EaCRuntimeHandlers } from '@fathym/eac/runtime';
+import { EverythingAsCodeClouds } from '@fathym/eac/clouds';
+import { loadDataLakeClient } from '@fathym/eac/utils/azure';
+import { EaCRuntimeContext, EaCRuntimeHandlers } from '@fathym/eac-runtime';
 import { FileReadResponse } from 'npm:@azure/storage-file-datalake';
 import { parse as json2csv } from 'npm:json2csv';
 import { EaCAPIUserState } from '../../../../../../../../../src/state/EaCAPIUserState.ts';

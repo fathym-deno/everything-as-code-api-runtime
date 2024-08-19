@@ -5,7 +5,7 @@ import {
   EaCStatusProcessingTypes,
   UserEaCRecord,
 } from '@fathym/eac-api';
-import { listenQueueAtomic } from '@fathym/eac/deno';
+import { listenQueueAtomic } from '@fathym/common/deno-kv';
 import { EaCDeleteRequest } from '../../src/reqres/EaCDeleteRequest.ts';
 import {
   markEaCProcessed,

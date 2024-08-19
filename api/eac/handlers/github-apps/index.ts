@@ -1,14 +1,6 @@
-
-import {
-  EaCGitHubAppAsCode,
-  EaCGitHubAppDetails,
-  EverythingAsCodeGitHub,
-} from '@fathym/eac';
-import {
-  eacSetSecrets,
-  loadSecretClient,
-} from '@fathym/eac/azure';
-import { EaCRuntimeContext, EaCRuntimeHandlers } from '@fathym/eac/runtime';
+import { EaCGitHubAppAsCode } from '@fathym/eac/github';
+import { eacSetSecrets, loadSecretClient } from '@fathym/eac/utils/azure';
+import { EaCRuntimeContext, EaCRuntimeHandlers } from '@fathym/eac-runtime';
 import { EaCAPIUserState } from '../../../../src/state/EaCAPIUserState.ts';
 import { EaCHandlerRequest } from '../../../../src/reqres/EaCHandlerRequest.ts';
 import { EaCHandlerResponse } from '../../../../src/reqres/EaCHandlerResponse.ts';
