@@ -10,13 +10,16 @@ import { EaCHandlerErrorResponse } from '../../../../src/reqres/EaCHandlerErrorR
 import { EaCHandlerResponse } from '../../../../src/reqres/EaCHandlerResponse.ts';
 import { EaCHandlerRequest } from '../../../../src/reqres/EaCHandlerRequest.ts';
 import { EaCAPIUserState } from '../../../../src/state/EaCAPIUserState.ts';
+import { EaCAPILoggingProvider } from '../../../../src/plugins/EaCAPILoggingProvider.ts';
 
 export default {
   async POST(req, ctx: EaCRuntimeContext<EaCAPIUserState>) {
+    const logger = await ctx.Runtime.IoC.Resolve(EaCAPILoggingProvider);
+
     try {
       const handlerRequest: EaCHandlerRequest = await req.json();
 
-      console.log(
+      logger.Package.debug(
         `Processing EaC commit ${handlerRequest.CommitID} Licenses processes for License ${handlerRequest.Lookup}`
       );
 
@@ -170,7 +173,7 @@ export default {
         Model: license,
       } as EaCHandlerResponse);
     } catch (err) {
-      console.error(err);
+      logger.Package.error('There was an error configuring the licenses', err);
 
       return Response.json({
         HasError: true,

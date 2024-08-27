@@ -37,8 +37,6 @@ export default {
       }
     }
 
-    console.log(billingAccounts);
-
     return Response.json(billingAccounts);
   },
 } as EaCRuntimeHandlers;

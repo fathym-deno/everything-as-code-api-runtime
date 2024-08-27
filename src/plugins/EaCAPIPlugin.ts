@@ -11,6 +11,8 @@ import {
   EaCRuntimePluginConfig,
   FathymAzureContainerCheckPlugin,
 } from '@fathym/eac-runtime';
+import { IoCContainer } from '@fathym/ioc';
+import { EaCAPILoggingProvider } from './EaCAPILoggingProvider.ts';
 
 export default class EaCAPIPlugin implements EaCRuntimePlugin {
   constructor() {}
@@ -19,6 +21,7 @@ export default class EaCAPIPlugin implements EaCRuntimePlugin {
     const pluginConfig: EaCRuntimePluginConfig = {
       Name: 'EaCAPIPlugin',
       Plugins: [new FathymAzureContainerCheckPlugin()],
+      IoC: new IoCContainer(),
       EaC: {
         Projects: {
           api: {
@@ -126,6 +129,11 @@ export default class EaCAPIPlugin implements EaCRuntimePlugin {
         },
       },
     };
+
+    pluginConfig.IoC!.Register(
+      EaCAPILoggingProvider,
+      () => new EaCAPILoggingProvider(),
+    );
 
     return Promise.resolve(pluginConfig);
   }

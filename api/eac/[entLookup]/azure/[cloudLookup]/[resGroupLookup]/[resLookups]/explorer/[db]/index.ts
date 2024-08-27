@@ -1,6 +1,5 @@
-
 import { EverythingAsCodeClouds } from '@fathym/eac/clouds';
-import { loadKustoClient } from '@fathym/eac/utils/azure';
+import { loadKustoClient } from '@fathym/eac/utils/azure/kusto';
 import { ExplorerRequest } from '@fathym/eac-api';
 import { EaCRuntimeContext, EaCRuntimeHandlers } from '@fathym/eac-runtime';
 import { EaCAPIUserState } from '../../../../../../../../../src/state/EaCAPIUserState.ts';
@@ -45,8 +44,6 @@ export default {
     );
 
     kustoClient.ensureOpen();
-
-    console.log(explorerReq);
 
     const dataSetResp = await kustoClient.execute(db, explorerReq.Query);
 

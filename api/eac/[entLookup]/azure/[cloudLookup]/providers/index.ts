@@ -1,18 +1,23 @@
-
-import { EaCCloudAzureDetails, EverythingAsCodeClouds } from '@fathym/eac/clouds';
+import {
+  EaCCloudAzureDetails,
+  EverythingAsCodeClouds,
+} from '@fathym/eac/clouds';
 import { loadAzureCloudCredentials } from '@fathym/eac/utils/azure';
 import { EaCServiceDefinitions } from '@fathym/eac-api';
 import { EaCRuntimeContext, EaCRuntimeHandlers } from '@fathym/eac-runtime';
 import { Provider, ResourceManagementClient } from 'npm:@azure/arm-resources';
 import { EaCAPIUserState } from '../../../../../../src/state/EaCAPIUserState.ts';
+import { EaCAPILoggingProvider } from '../../../../../../src/plugins/EaCAPILoggingProvider.ts';
 
 export default {
   async POST(req, ctx: EaCRuntimeContext<EaCAPIUserState>) {
+    const logger = await ctx.Runtime.IoC.Resolve(EaCAPILoggingProvider);
+
     const entLookup = ctx.State.UserEaC!.EnterpriseLookup;
 
     const cloudLookup = ctx.Params.cloudLookup as string;
 
-    console.log(
+    logger.Package.debug(
       `Ensuring providers are registered to cloud ${cloudLookup} for enterprise ${entLookup}`
     );
 
@@ -45,7 +50,7 @@ export default {
       const svcDefProviderCalls = svcDevLookups.map(async (sd) => {
         const provider = await resClient.providers.register(sd);
 
-        console.log(
+        logger.Package.debug(
           `Registered provider ${sd} to cloud ${cloudLookup} for enterprise ${entLookup}`
         );
 
@@ -55,7 +60,7 @@ export default {
       await Promise.all<Provider>(svcDefProviderCalls);
     }
 
-    console.log(
+    logger.Package.debug(
       `Providers are registered to cloud ${cloudLookup} for enterprise ${entLookup}`
     );
 

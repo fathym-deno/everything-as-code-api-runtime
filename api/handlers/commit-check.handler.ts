@@ -9,6 +9,7 @@ import {
   EaCStatus,
   EaCStatusProcessingTypes,
 } from '@fathym/eac-api';
+import { Logger } from '@std/log';
 import { EaCCommitCheckRequest } from '../../src/reqres/EaCCommitCheckRequest.ts';
 import { EaCHandlerCheckRequest } from '../../src/reqres/EaCHandlerCheckRequest.ts';
 import { EaCHandlerErrorResponse } from '../../src/reqres/EaCHandlerErrorResponse.ts';
@@ -18,11 +19,12 @@ import {
 } from '../../src/utils/eac/helpers.ts';
 
 export async function handleEaCCommitCheckRequest(
+  logger: Logger,
   eacKv: Deno.Kv,
   commitKv: Deno.Kv,
   commitCheckReq: EaCCommitCheckRequest
 ) {
-  console.log(`Processing EaC commit check for ${commitCheckReq.CommitID}`);
+  logger.debug(`Processing EaC commit check for ${commitCheckReq.CommitID}`);
 
   const { EnterpriseLookup, ParentEnterpriseLookup, Details, Handlers } =
     commitCheckReq.EaC;
@@ -128,14 +130,14 @@ export async function handleEaCCommitCheckRequest(
 
         op = enqueueAtomicOperation(op, newCommitCheckReq, 1000 * 10);
 
-        console.log(`Requeuing EaC commit ${commitCheckReq.CommitID} checks`);
+        logger.debug(`Requeuing EaC commit ${commitCheckReq.CommitID} checks`);
       } else if (errors.length > 0) {
         op = markEaCProcessed(EnterpriseLookup!, op);
 
-        console.log(
-          `Processed EaC commit ${commitCheckReq.CommitID}, from checks, with errors`
+        logger.error(
+          `Processed EaC commit ${commitCheckReq.CommitID}, from checks, with errors`,
+          errors
         );
-        console.log(errors);
       } else {
         let saveEaC = { ...commitCheckReq.EaC };
 
@@ -162,7 +164,7 @@ export async function handleEaCCommitCheckRequest(
 
           op = enqueueAtomicOperation(op, commitReq);
 
-          console.log(
+          logger.debug(
             `Completed processing checks for commit ${
               commitCheckReq.CommitID
             }, requeued with keys ${commitCheckReq.ToProcessKeys.join(',')} `
@@ -170,7 +172,7 @@ export async function handleEaCCommitCheckRequest(
         } else {
           op = markEaCProcessed(EnterpriseLookup!, op);
 
-          console.log(`Processed EaC commit ${commitCheckReq.CommitID}`);
+          logger.debug(`Processed EaC commit ${commitCheckReq.CommitID}`);
         }
 
         op = op.set(['EaC', 'Current', EnterpriseLookup!], saveEaC);

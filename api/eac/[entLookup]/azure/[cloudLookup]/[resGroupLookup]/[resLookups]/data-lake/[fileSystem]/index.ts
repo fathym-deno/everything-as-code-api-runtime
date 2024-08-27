@@ -4,6 +4,7 @@ import { EaCRuntimeContext, EaCRuntimeHandlers } from '@fathym/eac-runtime';
 import { FileReadResponse } from 'npm:@azure/storage-file-datalake';
 import { parse as json2csv } from 'npm:json2csv';
 import { EaCAPIUserState } from '../../../../../../../../../src/state/EaCAPIUserState.ts';
+import { EaCAPILoggingProvider } from '../../../../../../../../../src/plugins/EaCAPILoggingProvider.ts';
 
 export const flattenJson = (function (isArray, wrapped) {
   return function (table: any) {
@@ -77,6 +78,8 @@ export const flattenJson = (function (isArray, wrapped) {
 
 export default {
   async GET(req, ctx: EaCRuntimeContext<EaCAPIUserState>) {
+    const logger = await ctx.Runtime.IoC.Resolve(EaCAPILoggingProvider);
+
     const entLookup = ctx.State.UserEaC!.EnterpriseLookup;
 
     const cloudLookup = ctx.Params.cloudLookup as string;
@@ -237,8 +240,6 @@ export default {
                                   flattenJson(JSON.parse(item))
                                 );
                               } catch (err) {
-                                console.log(lastItem);
-                                console.log(item);
                                 throw err;
                               }
                             }
@@ -254,8 +255,6 @@ export default {
                             } else if (resultType === 'json') {
                               // TODO(mcgear): Implement JSONPatch mechanism for JSON object constructionon the client?
                             }
-
-                            console.log(item);
 
                             controller.enqueue(
                               new TextEncoder().encode(`${item}\n`)

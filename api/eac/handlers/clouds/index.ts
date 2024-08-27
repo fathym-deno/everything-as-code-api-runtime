@@ -18,15 +18,18 @@ import {
   ensureRoleAssignments,
   finalizeCloudDetails,
 } from '../../../../src/eac/clouds.helpers.ts';
+import { EaCAPILoggingProvider } from '../../../../src/plugins/EaCAPILoggingProvider.ts';
 
 export default {
   async POST(req, ctx: EaCRuntimeContext<EaCAPIUserState>) {
+    const logger = await ctx.Runtime.IoC.Resolve(EaCAPILoggingProvider);
+
     try {
       // const username = ctx.state.Username;
 
       const handlerRequest: EaCHandlerRequest = await req.json();
 
-      console.log(
+      logger.Package.debug(
         `Processing EaC commit ${handlerRequest.CommitID} Cloud processes for cloud ${handlerRequest.Lookup}`
       );
 
@@ -42,6 +45,7 @@ export default {
       const cloud = handlerRequest.Model as EaCCloudAsCode;
 
       await finalizeCloudDetails(
+        logger.Package,
         eac.EnterpriseLookup!,
         cloudLookup,
         handlerRequest.CommitID,
@@ -49,6 +53,7 @@ export default {
       );
 
       const deployments = await buildCloudDeployments(
+        logger.Package,
         handlerRequest.CommitID,
         eac,
         cloudLookup,
@@ -56,6 +61,7 @@ export default {
       );
 
       const checks: EaCHandlerCheckRequest[] = await beginEaCDeployments(
+        logger.Package,
         handlerRequest.CommitID,
         cloud.Details ? cloud : current,
         deployments
@@ -90,7 +96,10 @@ export default {
         Model: cloud,
       } as EaCHandlerResponse);
     } catch (err) {
-      console.error(err);
+      logger.Package.error(
+        'There was an error starting the cloud deployments',
+        err
+      );
 
       return Response.json({
         HasError: true,

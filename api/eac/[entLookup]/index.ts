@@ -12,6 +12,7 @@ import { EaCRuntimeContext, EaCRuntimeHandlers } from '@fathym/eac-runtime';
 import { EaCAPIUserState } from '../../../src/state/EaCAPIUserState.ts';
 import { EaCDeleteRequest } from '../../../src/reqres/EaCDeleteRequest.ts';
 import { eacExists } from '../../../src/utils/eac/helpers.ts';
+import { EaCAPILoggingProvider } from '../../../src/plugins/EaCAPILoggingProvider.ts';
 
 export default {
   async GET(req, ctx: EaCRuntimeContext<EaCAPIUserState>) {
@@ -29,6 +30,8 @@ export default {
   },
 
   async POST(req, ctx: EaCRuntimeContext<EaCAPIUserState>) {
+    const logger = await ctx.Runtime.IoC.Resolve(EaCAPILoggingProvider);
+
     const entLookup = ctx.State.UserEaC!.EnterpriseLookup;
 
     const username = ctx.State.Username;
@@ -50,7 +53,7 @@ export default {
       Username: username!,
     };
 
-    console.log(
+    logger.Package.debug(
       `Updating EaC container for ${eac.EnterpriseLookup} with Commit ID ${commitStatus.ID}.`
     );
 
@@ -115,7 +118,7 @@ export default {
       eacKv
     );
 
-    console.log(
+    logger.Package.debug(
       `EaC container update for ${eac.EnterpriseLookup} queued with Commit ID ${commitStatus.ID}.`
     );
 

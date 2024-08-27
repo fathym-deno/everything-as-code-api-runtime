@@ -6,6 +6,7 @@ import {
   UserEaCRecord,
 } from '@fathym/eac-api';
 import { listenQueueAtomic } from '@fathym/common/deno-kv';
+import { Logger } from '@std/log';
 import { EaCDeleteRequest } from '../../src/reqres/EaCDeleteRequest.ts';
 import {
   markEaCProcessed,
@@ -13,11 +14,12 @@ import {
 } from '../../src/utils/eac/helpers.ts';
 
 export async function handleEaCDeleteRequest(
+  logger: Logger,
   eacKv: Deno.Kv,
   commitKv: Deno.Kv,
   deleteReq: EaCDeleteRequest
 ) {
-  console.log(`Processing EaC delete for ${deleteReq.CommitID}`);
+  logger.debug(`Processing EaC delete for ${deleteReq.CommitID}`);
 
   const status = await eacKv.get<EaCStatus>([
     'EaC',
@@ -33,7 +35,7 @@ export async function handleEaCDeleteRequest(
     status.value!.ID,
     deleteReq,
     () => {
-      return handleEaCDeleteRequest(eacKv, commitKv, deleteReq);
+      return handleEaCDeleteRequest(logger, eacKv, commitKv, deleteReq);
     },
     deleteReq.ProcessingSeconds
   );
@@ -88,8 +90,10 @@ export async function handleEaCDeleteRequest(
 
   status.value!.EndTime = new Date();
 
-  console.log(`Processed EaC delete for ${deleteReq.CommitID}:`);
-  console.log(status.value!);
+  logger.debug(
+    `Processed EaC delete for ${deleteReq.CommitID}:`,
+    status.value!
+  );
 
   await listenQueueAtomic(
     commitKv,

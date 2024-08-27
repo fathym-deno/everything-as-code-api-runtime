@@ -1,5 +1,4 @@
-import EaCAPIPlugin from '../src/plugins/EaCAPIPlugin.ts';
-import { listenForCommits } from '../api/handlers/index.ts';
+import { enqueueAtomic } from '@fathym/common/deno-kv';
 import { loadJwtConfig } from '@fathym/common/jwt';
 import { EverythingAsCode } from '@fathym/eac';
 import {
@@ -8,9 +7,11 @@ import {
   EaCStatusProcessingTypes,
   UserEaCRecord,
 } from '@fathym/eac-api';
-import { enqueueAtomic } from '@fathym/common/deno-kv';
 import { DefaultEaCConfig, defineEaCConfig, EaCRuntime } from '@fathym/eac-runtime';
 import { delay } from '@std/async/delay';
+import EaCAPIPlugin from '../src/plugins/EaCAPIPlugin.ts';
+import { listenForCommits } from '../api/handlers/index.ts';
+import { EaCAPILoggingProvider } from '../src/plugins/EaCAPILoggingProvider.ts';
 
 export const config = defineEaCConfig({
   Plugins: [new EaCAPIPlugin(), ...(DefaultEaCConfig.Plugins || [])],
@@ -26,7 +27,9 @@ export async function configure(rt: EaCRuntime): Promise<void> {
 }
 
 async function initializePrimaryEaC(rt: EaCRuntime): Promise<void> {
-  console.log('Initializing primary EaC checks');
+  const logger = await rt.IoC.Resolve(EaCAPILoggingProvider);
+
+  logger.Package.debug('Initializing primary EaC checks');
 
   const eacKv = await rt.IoC.Resolve(Deno.Kv, 'eac');
 
@@ -45,7 +48,7 @@ async function initializePrimaryEaC(rt: EaCRuntime): Promise<void> {
   }
 
   if (!hasExistingEaCs) {
-    console.log('Preparing core EaC record...');
+    logger.Package.debug('Preparing core EaC record...');
 
     const commitKv = await rt.IoC.Resolve<Deno.Kv>(Deno.Kv, 'commit');
 
@@ -103,7 +106,7 @@ async function initializePrimaryEaC(rt: EaCRuntime): Promise<void> {
       eacKv,
     );
 
-    console.log('Waiting for core EaC record...');
+    logger.Package.debug('Waiting for core EaC record...');
 
     let eac: EverythingAsCode | null;
 
@@ -119,7 +122,7 @@ async function initializePrimaryEaC(rt: EaCRuntime): Promise<void> {
       ).value;
     } while (!eac);
 
-    console.log(
+    logger.Package.debug(
       `Core EaC record has been created: ${createStatus.EnterpriseLookup}`,
     );
 
@@ -131,8 +134,10 @@ async function initializePrimaryEaC(rt: EaCRuntime): Promise<void> {
       1000 * 60 * 60 * 24 * 365 * 5,
     );
 
-    console.log('The main JWT to use for connecting with EaC Core:');
-    console.log(mainJwt);
+    logger.Package.debug(
+      'The main JWT to use for connecting with EaC Core:',
+      mainJwt,
+    );
 
     const userRecords = usernames.map((username) => {
       return {
@@ -156,6 +161,6 @@ async function initializePrimaryEaC(rt: EaCRuntime): Promise<void> {
 
     await usersSetupOp.commit();
   } else {
-    console.log('There are existing EaC Records');
+    logger.Package.debug('There are existing EaC Records');
   }
 }

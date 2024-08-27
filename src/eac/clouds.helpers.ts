@@ -16,6 +16,8 @@ import {
   loadMainAzureCredentials,
   loadResoureTypeApiVersions,
 } from '@fathym/eac/utils/azure';
+import { delay } from '@std/async/delay';
+import { Logger } from '@std/log';
 import { AuthorizationManagementClient } from 'npm:@azure/arm-authorization';
 import {
   Deployment,
@@ -39,7 +41,6 @@ import { TokenCredential } from 'npm:@azure/identity';
 import Handlebars from 'npm:handlebars/dist/handlebars.min.js';
 import { EaCCloudDeployment } from '../reqres/EaCCloudDeployment.ts';
 import { EaCHandlerCheckRequest } from '../reqres/EaCHandlerCheckRequest.ts';
-import { delay } from '@std/async/delay';
 
 class TokenProvider implements AuthenticationProvider {
   constructor(
@@ -59,8 +60,6 @@ class TokenProvider implements AuthenticationProvider {
 }
 
 export async function getCurrentAzureUser(accessToken: string) {
-  // console.log(`Finalizing EaC commit ${commitId} Cloud details`);
-
   // const creds = loadAzureCloudCredentials(cloud);
   // const creds = loadMainAzureCredentials();
 
@@ -88,13 +87,14 @@ export async function getCurrentAzureUser(accessToken: string) {
 }
 
 export async function finalizeCloudDetails(
+  logger: Logger,
   entLookup: string,
   cloudLookup: string,
   commitId: string,
   cloud: EaCCloudAsCode,
 ): Promise<void> {
   if (cloud.Details) {
-    console.log(`Finalizing EaC commit ${commitId} Cloud details`);
+    logger.debug(`Finalizing EaC commit ${commitId} Cloud details`);
 
     const details = cloud.Details as EaCCloudAzureDetails;
 
@@ -303,12 +303,13 @@ export async function generateGuid(...input: any[]): Promise<string> {
 }
 
 export async function buildCloudDeployments(
+  logger: Logger,
   commitId: string,
   eac: EverythingAsCodeClouds,
   cloudLookup: string,
   cloud: EaCCloudAsCode,
 ): Promise<EaCCloudDeployment[]> {
-  console.log(`Building EaC commit ${commitId} Cloud deloyments`);
+  logger.debug(`Building EaC commit ${commitId} Cloud deloyments`);
 
   const resGroupLookups = Object.keys(cloud.ResourceGroups || {});
 
@@ -318,6 +319,7 @@ export async function buildCloudDeployments(
     const resGroup = cloud.ResourceGroups![resGroupLookup];
 
     const deployment = await buildCloudDeployment(
+      logger,
       commitId,
       eac,
       cloudLookup,
@@ -334,6 +336,7 @@ export async function buildCloudDeployments(
 }
 
 export async function buildCloudDeployment(
+  logger: Logger,
   commitId: string,
   eac: EverythingAsCodeClouds,
   cloudLookup: string,
@@ -341,7 +344,7 @@ export async function buildCloudDeployment(
   resGroup: EaCCloudResourceGroupAsCode,
 ): Promise<EaCCloudDeployment | undefined> {
   if (Object.keys(resGroup.Resources || {}).length > 0) {
-    console.log(
+    logger.debug(
       `Building EaC commit ${commitId} Cloud deployment for ${resGroupLookup}`,
     );
 
@@ -549,6 +552,7 @@ export async function loadCloudResourceDetailAssets(
 }
 
 export async function loadCloudResourceGroupsConnections(
+  logger: Logger,
   cloud: EaCCloudAsCode,
   resGroupsDef: Record<string, EaCCloudResourceGroupAsCode>,
   resGroups: Record<string, EaCCloudResourceGroupAsCode>,
@@ -592,6 +596,7 @@ export async function loadCloudResourceGroupsConnections(
       ResourceGroupLookup: resGroupLookup,
       ResourceGroup: {
         Resources: await loadCloudResourcesConnections(
+          logger,
           creds,
           resGroupAzureResources,
           apiVersions,
@@ -613,6 +618,7 @@ export async function loadCloudResourceGroupsConnections(
 }
 
 export async function loadCloudResourcesConnections(
+  logger: Logger,
   creds: TokenCredential,
   azureResources: GenericResourceExpanded[],
   apiVersions: Record<string, string>,
@@ -654,9 +660,10 @@ export async function loadCloudResourcesConnections(
           );
         }
       } catch (err) {
-        console.error(err);
-
-        err.toString();
+        logger.error(
+          'There was an issue loadnig the cloud resources connections.',
+          err,
+        );
       }
     }
 
@@ -679,6 +686,7 @@ export async function loadCloudResourcesConnections(
         Locations: resLocations,
         Profiles: resPubProfiles,
         Resources: await loadCloudResourcesConnections(
+          logger,
           creds,
           azureResources,
           apiVersions,
@@ -793,11 +801,7 @@ export async function loadResourceKeys(
     });
 
     try {
-      const text = await response.text();
-
-      // console.log(text);
-
-      const keys = JSON.parse(text);
+      const keys = await response.json();
 
       if (!keys.error) {
         if (Array.isArray(keys)) {
@@ -819,11 +823,12 @@ export async function loadResourceKeys(
 }
 
 export async function beginEaCDeployments(
+  logger: Logger,
   commitId: string,
   cloud: EaCCloudAsCode,
   deployments: EaCCloudDeployment[],
 ): Promise<EaCHandlerCheckRequest[]> {
-  console.log(`Beginning EaC commit ${commitId} Cloud deloyments`);
+  logger.debug(`Beginning EaC commit ${commitId} Cloud deloyments`);
 
   const details = cloud.Details as EaCCloudAzureDetails;
 
@@ -851,6 +856,7 @@ export async function beginEaCDeployments(
 }
 
 export async function loadDeploymentDetails(
+  logger: Logger,
   commitId: string,
   cloud: EaCCloudAsCode,
   deploymentName: string,
@@ -860,7 +866,7 @@ export async function loadDeploymentDetails(
   Deployment: DeploymentExtended;
   Messages: Record<string, unknown>;
 }> {
-  console.log(
+  logger.debug(
     `Processing EaC commit ${commitId} Cloud checks for deployment ${deploymentName}`,
   );
 
@@ -897,6 +903,7 @@ export async function loadDeploymentDetails(
         'Microsoft.Resources/deployments'
     ) {
       const subDeployDetails = await loadDeploymentDetails(
+        logger,
         commitId,
         cloud,
         nextResource,

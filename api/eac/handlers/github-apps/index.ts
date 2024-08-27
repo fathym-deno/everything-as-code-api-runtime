@@ -4,12 +4,15 @@ import { EaCRuntimeContext, EaCRuntimeHandlers } from '@fathym/eac-runtime';
 import { EaCAPIUserState } from '../../../../src/state/EaCAPIUserState.ts';
 import { EaCHandlerRequest } from '../../../../src/reqres/EaCHandlerRequest.ts';
 import { EaCHandlerResponse } from '../../../../src/reqres/EaCHandlerResponse.ts';
+import { EaCAPILoggingProvider } from '../../../../src/plugins/EaCAPILoggingProvider.ts';
 
 export default {
   async POST(req, ctx: EaCRuntimeContext<EaCAPIUserState>) {
+    const logger = await ctx.Runtime.IoC.Resolve(EaCAPILoggingProvider);
+
     const handlerRequest: EaCHandlerRequest = await req.json();
 
-    console.log(
+    logger.Package.debug(
       `Processing EaC commit ${handlerRequest.CommitID} GitHub App processes for app ${handlerRequest.Lookup}`
     );
 

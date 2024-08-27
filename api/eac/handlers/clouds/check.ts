@@ -1,5 +1,7 @@
-
-import { EaCCloudAzureDetails, EverythingAsCodeClouds } from '@fathym/eac/clouds';
+import {
+  EaCCloudAzureDetails,
+  EverythingAsCodeClouds,
+} from '@fathym/eac/clouds';
 import { EaCRuntimeContext, EaCRuntimeHandlers } from '@fathym/eac-runtime';
 import { EaCAPIUserState } from '../../../../src/state/EaCAPIUserState.ts';
 import { EaCHandlerCloudCheckRequest } from '../../../../src/reqres/EaCHandlerCloudCheckRequest.ts';
@@ -9,14 +11,19 @@ import {
 } from '../../../../src/eac/clouds.helpers.ts';
 import { EaCHandlerCheckResponse } from '../../../../src/reqres/EaCHandlerCheckResponse.ts';
 import { loadAzureCloudCredentials } from '@fathym/eac/utils/azure';
+import { EaCAPILoggingProvider } from '../../../../src/plugins/EaCAPILoggingProvider.ts';
 
 export default {
   async POST(req, ctx: EaCRuntimeContext<EaCAPIUserState>) {
+    const logger = await ctx.Runtime.IoC.Resolve(EaCAPILoggingProvider);
+
     // const username = ctx.state.Username;
 
     const checkRequest: EaCHandlerCloudCheckRequest = await req.json();
 
-    console.log(`Processing EaC commit ${checkRequest.CommitID} Cloud checks`);
+    logger.Package.debug(
+      `Processing EaC commit ${checkRequest.CommitID} Cloud checks`
+    );
 
     try {
       const eac = checkRequest!.EaC as EverythingAsCodeClouds;
@@ -26,6 +33,7 @@ export default {
       const cloud = currentClouds[checkRequest.CloudLookup] || {};
 
       const deployDetails = await loadDeploymentDetails(
+        logger.Package,
         checkRequest.CommitID,
         cloud,
         checkRequest.Name,
@@ -67,7 +75,7 @@ export default {
         Messages: deployDetails.Messages,
       } as EaCHandlerCheckResponse);
     } catch (err) {
-      console.error(err);
+      logger.Package.error('There was an error checking the deployments', err);
 
       return Response.json({
         CorelationID: checkRequest.CorelationID,

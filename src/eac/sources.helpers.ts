@@ -16,6 +16,7 @@ import {
   loadOctokit,
   tryGetRepository,
 } from '@fathym/eac/octokit';
+import { Logger } from '@std/log';
 import Handlebars from 'npm:handlebars/dist/handlebars.min.js';
 import { Buffer } from 'node:buffer';
 import sodium from 'https://deno.land/x/sodium@0.2.0/basic.ts';
@@ -99,6 +100,7 @@ export async function ensureSource(
 }
 
 export async function ensureSourceArtifacts(
+  logger: Logger,
   eac: EverythingAsCodeSources & EverythingAsCode,
   providerDetails: EaCGitHubAppProviderDetails,
   connection: EaCSourceConnectionAsCode,
@@ -163,7 +165,10 @@ export async function ensureSourceArtifacts(
 
         sha = file.sha;
       } catch (err) {
-        console.log(err);
+        logger.error(
+          'There was an error loading the github workflow action',
+          err,
+        );
       }
 
       await octokit.rest.repos.createOrUpdateFileContents({

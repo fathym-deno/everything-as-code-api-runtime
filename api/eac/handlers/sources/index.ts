@@ -22,15 +22,18 @@ import {
 } from '../../../../src/eac/sources.helpers.ts';
 import { EaCHandlerResponse } from '../../../../src/reqres/EaCHandlerResponse.ts';
 import { EaCHandlerErrorResponse } from '../../../../src/reqres/EaCHandlerErrorResponse.ts';
+import { EaCAPILoggingProvider } from '../../../../src/plugins/EaCAPILoggingProvider.ts';
 
 export default {
   async POST(req, ctx: EaCRuntimeContext<EaCAPIUserState>) {
+    const logger = await ctx.Runtime.IoC.Resolve(EaCAPILoggingProvider);
+
     try {
       // const username = ctx.state.Username;
 
       const handlerRequest: EaCHandlerRequest = await req.json();
 
-      console.log(
+      logger.Package.debug(
         `Processing EaC commit ${handlerRequest.CommitID} Source processes for source ${handlerRequest.Lookup}`
       );
 
@@ -112,6 +115,7 @@ export default {
         await delay(1000);
 
         await ensureSourceArtifacts(
+          logger.Package,
           eac,
           providerDetails,
           sourceConnection,
@@ -129,7 +133,7 @@ export default {
         Model: source,
       } as EaCHandlerResponse);
     } catch (err) {
-      console.error(err);
+      logger.Package.error('There was an error setting up the sources', err);
 
       return Response.json({
         HasError: true,

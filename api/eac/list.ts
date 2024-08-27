@@ -1,10 +1,12 @@
-
 import { UserEaCRecord } from '@fathym/eac-api';
 import { EaCRuntimeContext, EaCRuntimeHandlers } from '@fathym/eac-runtime';
 import { EaCAPIState } from '../../src/state/EaCAPIState.ts';
+import { EaCAPILoggingProvider } from '../../src/plugins/EaCAPILoggingProvider.ts';
 
 export default {
   async GET(req, ctx: EaCRuntimeContext<EaCAPIState>) {
+    const logger = await ctx.Runtime.IoC.Resolve(EaCAPILoggingProvider);
+
     const username = ctx.State.Username!;
 
     const url = new URL(req.url);
@@ -29,7 +31,10 @@ export default {
         }
       }
     } catch (err) {
-      console.log(err);
+      logger.Package.error(
+        `The was an error processing the user eac results for '${username}'`,
+        err
+      );
     }
 
     // const userEaCs = await denoKv.getMany<EverythingAsCode[]>(

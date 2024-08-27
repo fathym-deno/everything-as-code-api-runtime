@@ -23,10 +23,11 @@
   "imports": {
     "@azure/core-util": "npm:@azure/core-util",
     "@djwt": "jsr:@zaubrik/djwt@3.0.2",
-    "@fathym/common": "jsr:@fathym/common@0",
-    "@fathym/eac": "jsr:@fathym/eac@0",
-    "@fathym/eac-api": "jsr:@fathym/eac-api@0",
-    "@fathym/eac-runtime": "jsr:@fathym/eac-runtime@0",
+    "@fathym/common": "jsr:@fathym/common@0.2.33",
+    "@fathym/eac": "jsr:@fathym/eac@0.1.21",
+    "@fathym/eac-api": "jsr:@fathym/eac-api@0.1.9",
+    "@fathym/eac-runtime": "jsr:@fathym/eac-runtime@0.1.16",
+    "@fathym/ioc": "jsr:@fathym/ioc@0.0.12",
     "preact": "npm:preact@10.20.1",
     "preact/jsx-runtime": "npm:preact@10.20.1/jsx-runtime",
     "preact-render-to-string": "npm:preact-render-to-string@6.4.1",
@@ -34,7 +35,8 @@
     "@std/async/delay": "jsr:@std/async@1/delay",
     "@std/dotenv": "jsr:@std/dotenv@0",
     "@std/encoding/base64": "jsr:@std/encoding@1/base64",
-    "@std/http": "jsr:@std/http@1"
+    "@std/http": "jsr:@std/http@1",
+    "@std/log": "jsr:@std/log@0.224.6"
   },
   "exclude": ["**/_eac-runtime/*"],
   "lint": {

@@ -11,9 +11,12 @@ import {
 import { EaCRuntimeContext, EaCRuntimeHandlers } from '@fathym/eac-runtime';
 import { eacExists } from '../../src/utils/eac/helpers.ts';
 import { EaCAPIState } from '../../src/state/EaCAPIState.ts';
+import { EaCAPILoggingProvider } from '../../src/plugins/EaCAPILoggingProvider.ts';
 
 export default {
   async POST(req, ctx: EaCRuntimeContext<EaCAPIState>) {
+    const logger = await ctx.Runtime.IoC.Resolve(EaCAPILoggingProvider);
+
     const url = new URL(req.url);
 
     const username = url.searchParams.get('username')!;
@@ -33,7 +36,7 @@ export default {
       Username: username,
     };
 
-    console.log(
+    logger.Package.debug(
       `Create EaC container for ${eac.EnterpriseLookup} with Commit ID ${createStatus.ID} for user ${createStatus.Username}.`
     );
 
@@ -103,7 +106,7 @@ export default {
       eacKv
     );
 
-    console.log(
+    logger.Package.debug(
       `EaC container creation for ${eac.EnterpriseLookup} queued with Commit ID ${createStatus.ID}.`
     );
 

@@ -6,15 +6,18 @@ import { EaCHandlerResponse } from '../../../../src/reqres/EaCHandlerResponse.ts
 import { EaCHandlerRequest } from '../../../../src/reqres/EaCHandlerRequest.ts';
 import { EaCAPIUserState } from '../../../../src/state/EaCAPIUserState.ts';
 import { ensureIoTDevices } from '../../../../src/eac/iot.helpers.ts';
+import { EaCAPILoggingProvider } from '../../../../src/plugins/EaCAPILoggingProvider.ts';
 
 export default {
   async POST(req, ctx: EaCRuntimeContext<EaCAPIUserState>) {
+    const logger = await ctx.Runtime.IoC.Resolve(EaCAPILoggingProvider);
+
     try {
       // const username = ctx.state.Username;
 
       const handlerRequest: EaCHandlerRequest = await req.json();
 
-      console.log(
+      logger.Package.debug(
         `Processing EaC commit ${handlerRequest.CommitID} IoT processes for IoT ${handlerRequest.Lookup}`
       );
 
@@ -31,7 +34,7 @@ export default {
 
       const iotCloud = eac.Clouds![current.CloudLookup!];
 
-      const devicesResp = await ensureIoTDevices(iotCloud, current, iot);
+      const devicesResp = await ensureIoTDevices(logger.Package, iotCloud, current, iot);
 
       if (Object.keys(devicesResp || {}).length === 0) {
         return Response.json({
@@ -51,7 +54,10 @@ export default {
         } as EaCHandlerErrorResponse);
       }
     } catch (err) {
-      console.error(err);
+      logger.Package.error(
+        'There was an error configuring the IoT device',
+        err
+      );
 
       return Response.json({
         HasError: true,

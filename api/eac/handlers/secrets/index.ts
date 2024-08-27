@@ -1,23 +1,21 @@
 import { merge } from '@fathym/common';
-import {
-  EverythingAsCode,
-} from '@fathym/eac';
-import {
-  EaCSecretAsCode,
-  EverythingAsCodeClouds,
-} from '@fathym/eac/clouds';
+import { EverythingAsCode } from '@fathym/eac';
+import { EaCSecretAsCode, EverythingAsCodeClouds } from '@fathym/eac/clouds';
 import { eacSetSecrets, loadSecretClient } from '@fathym/eac/utils/azure';
 import { EaCRuntimeContext, EaCRuntimeHandlers } from '@fathym/eac-runtime';
 import { EaCHandlerResponse } from '../../../../src/reqres/EaCHandlerResponse.ts';
 import { resolveDynamicValues } from '../../../../src/utils/eac/resolveDynamicValues.ts';
 import { EaCHandlerRequest } from '../../../../src/reqres/EaCHandlerRequest.ts';
 import { EaCAPIUserState } from '../../../../src/state/EaCAPIUserState.ts';
+import { EaCAPILoggingProvider } from '../../../../src/plugins/EaCAPILoggingProvider.ts';
 
 export default {
   async POST(req, ctx: EaCRuntimeContext<EaCAPIUserState>) {
+    const logger = await ctx.Runtime.IoC.Resolve(EaCAPILoggingProvider);
+
     const handlerRequest: EaCHandlerRequest = await req.json();
 
-    console.log(
+    logger.Package.debug(
       `Processing EaC commit ${handlerRequest.CommitID} Secret processes for secret ${handlerRequest.Lookup}`
     );
 

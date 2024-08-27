@@ -1,5 +1,9 @@
 import { merge } from '@fathym/common';
-import { EaCModuleHandler, EaCMetadataBase, EverythingAsCode } from '@fathym/eac';
+import {
+  EaCModuleHandler,
+  EaCMetadataBase,
+  EverythingAsCode,
+} from '@fathym/eac';
 import {
   AtomicOperationHandler,
   enqueueAtomicOperation,
@@ -11,6 +15,7 @@ import {
   EaCStatusProcessingTypes,
   UserEaCRecord,
 } from '@fathym/eac-api';
+import { Logger } from '@std/log';
 import { eacHandlers } from '../../configs/eac-handlers.config.ts';
 import { EaCHandlerErrorResponse } from '../../src/reqres/EaCHandlerErrorResponse.ts';
 import { EaCHandlerCheckRequest } from '../../src/reqres/EaCHandlerCheckRequest.ts';
@@ -22,11 +27,12 @@ import {
 } from '../../src/utils/eac/helpers.ts';
 
 export async function handleEaCCommitRequest(
+  logger: Logger,
   eacKv: Deno.Kv,
   commitKv: Deno.Kv,
   commitReq: EaCCommitRequest
 ) {
-  console.log(`Processing EaC commit for ${commitReq.CommitID}`);
+  logger.debug(`Processing EaC commit for ${commitReq.CommitID}`);
 
   if (!commitReq.EaC.EnterpriseLookup) {
     throw new Error('The enterprise lookup must be provided.');
@@ -55,7 +61,7 @@ export async function handleEaCCommitRequest(
     status.value!.ID,
     commitReq,
     () => {
-      return handleEaCCommitRequest(eacKv, commitKv, commitReq);
+      return handleEaCCommitRequest(logger, eacKv, commitKv, commitReq);
     },
     commitReq.ProcessingSeconds
   );
@@ -103,6 +109,7 @@ export async function handleEaCCommitRequest(
 
   diffKeys.forEach(
     processDiffKey(
+      logger,
       eacKv,
       eacDiff,
       saveEaC,
@@ -114,7 +121,7 @@ export async function handleEaCCommitRequest(
     )
   );
 
-  await processDiffCalls(diffCalls, allChecks, errors, status.value!);
+  await processDiffCalls(logger, diffCalls, allChecks, errors, status.value!);
 
   if (errors.length === 0 && allChecks.length === 0) {
     status.value!.Processing = EaCStatusProcessingTypes.COMPLETE;
@@ -128,6 +135,7 @@ export async function handleEaCCommitRequest(
     commitKv,
     commitReq,
     configureListenQueueOp(
+      logger,
       existingEaC,
       status,
       EnterpriseLookup,
@@ -142,6 +150,7 @@ export async function handleEaCCommitRequest(
 }
 
 function configureListenQueueOp(
+  logger: Logger,
   existingEaC: Deno.KvEntryMaybe<EverythingAsCode>,
   status: Deno.KvEntryMaybe<EaCStatus>,
   entLookup: string,
@@ -187,19 +196,21 @@ function configureListenQueueOp(
 
       op = enqueueAtomicOperation(op, commitCheckReq, 1000 * 5);
 
-      console.log(`Queuing EaC commit ${commitReq.CommitID} checks`);
+      logger.debug(`Queuing EaC commit ${commitReq.CommitID} checks`);
     } else if (errors.length > 0) {
       op = markEaCProcessed(entLookup, op);
 
-      console.log(`Processed EaC commit ${commitReq.CommitID} with errors`);
-      console.log(errors);
+      logger.error(
+        `Processed EaC commit ${commitReq.CommitID} with errors`,
+        errors
+      );
     } else {
       op = markEaCProcessed(entLookup, op).set(
         ['EaC', 'Current', entLookup],
         saveEaC
       );
 
-      console.log(`Processed EaC commit ${commitReq.CommitID}`);
+      logger.debug(`Processed EaC commit ${commitReq.CommitID}`);
     }
 
     return op;
@@ -207,6 +218,7 @@ function configureListenQueueOp(
 }
 
 async function processDiffCalls(
+  logger: Logger,
   diffCalls: Record<number, (() => Promise<void>)[]>,
   allChecks: EaCHandlerCheckRequest[],
   errors: EaCHandlerErrorResponse[],
@@ -219,7 +231,7 @@ async function processDiffCalls(
     });
 
   for (const order of ordered) {
-    console.log(
+    logger.debug(
       `Processing EaC commit ${status.ID} diff calls (${
         diffCalls[order]?.length || 0
       }) for order '${order}'`
@@ -250,6 +262,7 @@ async function processDiffCalls(
 }
 
 function processDiffKey(
+  logger: Logger,
   denoKv: Deno.Kv,
   eacDiff: EverythingAsCode,
   saveEaC: EverythingAsCode,
@@ -260,7 +273,7 @@ function processDiffKey(
   diffCalls: Record<number, (() => Promise<void>)[]>
 ): (key: string) => void {
   return (key) => {
-    console.log(
+    logger.debug(
       `Preparing EaC commit ${commitReq.CommitID} to process key ${key}`
     );
 
@@ -271,6 +284,7 @@ function processDiffKey(
 
       if (handler) {
         const process = processEaCHandler(
+          logger,
           denoKv,
           diff,
           handler,
@@ -292,6 +306,7 @@ function processDiffKey(
 }
 
 function processEaCHandler(
+  logger: Logger,
   denoKv: Deno.Kv,
   diff: unknown,
   handler: EaCModuleHandler,
@@ -303,7 +318,7 @@ function processEaCHandler(
   errors: EaCHandlerErrorResponse[]
 ): () => Promise<void> {
   return async () => {
-    console.log(`Processing EaC commit ${commitReq.CommitID} for key ${key}`);
+    logger.debug(`Processing EaC commit ${commitReq.CommitID} for key ${key}`);
 
     if (
       !Array.isArray(diff) &&

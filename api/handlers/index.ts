@@ -5,6 +5,7 @@ import { isEaCDeleteRequest } from '../../src/reqres/EaCDeleteRequest.ts';
 import { handleEaCCommitCheckRequest } from './commit-check.handler.ts';
 import { handleEaCDeleteRequest } from './delete.handler.ts';
 import { handleEaCCommitRequest } from './commit.handler.ts';
+import { EaCAPILoggingProvider } from '../../src/plugins/EaCAPILoggingProvider.ts';
 
 export const listenForCommits = async (rt: EaCRuntime) => {
   if (!IS_BUILDING) {
@@ -16,24 +17,26 @@ export const listenForCommits = async (rt: EaCRuntime) => {
      * This listener set is responsible for the core EaC actions.
      */
     commitKv.listenQueue(async (msg: unknown) => {
+      const logger = await rt.IoC.Resolve(EaCAPILoggingProvider);
+
       const trackingKey = ['Handlers', 'Commits', 'Processing'];
 
       if (isEaCCommitCheckRequest(msg)) {
-        console.log(
+        logger.Package.debug(
           `Queue message picked up for processing commit checks ${msg.CommitID}`
         );
 
         trackingKey.push('Checks');
         trackingKey.push(msg.CommitID);
       } else if (isEaCDeleteRequest(msg)) {
-        console.log(
+        logger.Package.debug(
           `Queue message picked up for processing commit delete ${msg.CommitID}`
         );
 
         trackingKey.push('Delete');
         trackingKey.push(msg.CommitID);
       } else if (isEaCCommitRequest(msg)) {
-        console.log(
+        logger.Package.debug(
           `Queue message picked up for processing commit ${msg.CommitID}`
         );
 
@@ -48,14 +51,14 @@ export const listenForCommits = async (rt: EaCRuntime) => {
           await commitKv.set(trackingKey, true);
 
           if (isEaCCommitCheckRequest(msg)) {
-            await handleEaCCommitCheckRequest(eacKv, commitKv, msg);
+            await handleEaCCommitCheckRequest(logger.Package, eacKv, commitKv, msg);
           } else if (isEaCDeleteRequest(msg)) {
-            await handleEaCDeleteRequest(eacKv, commitKv, msg);
+            await handleEaCDeleteRequest(logger.Package, eacKv, commitKv, msg);
           } else if (isEaCCommitRequest(msg)) {
-            await handleEaCCommitRequest(eacKv, commitKv, msg);
+            await handleEaCCommitRequest(logger.Package, eacKv, commitKv, msg);
           }
         } else {
-          console.log(
+          logger.Package.debug(
             `The commit ${
               (msg as { CommitID: string }).CommitID
             } is already processing.`
@@ -64,7 +67,7 @@ export const listenForCommits = async (rt: EaCRuntime) => {
       } finally {
         await commitKv.delete(trackingKey);
 
-        console.log(
+        logger.Package.debug(
           `The commit ${
             (msg as { CommitID: string }).CommitID
           } completed processing.`

@@ -6,11 +6,13 @@ import {
   EverythingAsCodeIoT,
 } from '@fathym/eac/iot';
 import { loadAzureCloudCredentials } from '@fathym/eac/utils/azure';
+import { Logger } from '@std/log';
 import { IotHubClient } from 'npm:@azure/arm-iothub';
 import { Registry as IoTRegistry } from 'npm:azure-iothub';
 import { EnsureIoTDevicesResponse } from '../reqres/EnsureIoTDevicesResponse.ts';
 
 export async function ensureIoTDevices(
+  logger: Logger,
   cloud: EaCCloudAsCode,
   currentIoT: EaCIoTAsCode,
   iot: EaCIoTAsCode,
@@ -56,7 +58,7 @@ export async function ensureIoTDevices(
 
         return null;
       } catch (err) {
-        console.error(err);
+        logger.error('There was an error ensuring the IoT device', err);
 
         if (err.name !== 'DeviceNotFoundError') {
           throw err;
