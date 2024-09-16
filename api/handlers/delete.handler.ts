@@ -72,7 +72,11 @@ export async function handleEaCDeleteRequest(
         deleteFrom: any
       ) => {
         for (const toDelete in deleteRef) {
-          if (deleteRef[toDelete] === null) {
+          if (Array.isArray(deleteRef[toDelete])) {
+            deleteFrom[toDelete] = (deleteFrom[toDelete] as []).filter(
+              (x) => !(deleteRef[toDelete] as []).includes(x)
+            );
+          } else if (deleteRef[toDelete] === null) {
             delete deleteFrom[toDelete];
           } else if (deleteRef[toDelete] !== undefined) {
             if (deleteFrom[toDelete]) {
@@ -82,7 +86,9 @@ export async function handleEaCDeleteRequest(
         }
       };
 
-      deleteFromEaC(deleteEaCDef, eac.value![deleteKey]);
+      if (eac.value?.[deleteKey]) {
+        deleteFromEaC(deleteEaCDef, eac.value![deleteKey]);
+      }
     }
 
     status.value!.Processing = EaCStatusProcessingTypes.COMPLETE;
