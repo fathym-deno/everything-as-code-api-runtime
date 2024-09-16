@@ -4,7 +4,7 @@ import {
   EaCKeepAliveModifierDetails,
 } from '@fathym/eac/applications';
 import { EaCDenoKVDatabaseDetails } from '@fathym/eac/databases';
-import { EaCLocalDistributedFileSystem } from '@fathym/eac/dfs';
+import { EaCLocalDistributedFileSystemDetails } from '@fathym/eac/dfs';
 import {
   EaCRuntimeConfig,
   EaCRuntimePlugin,
@@ -84,13 +84,15 @@ export default class EaCAPIPlugin implements EaCRuntimePlugin {
             } as EaCAPIProcessor,
           },
         },
-        DFS: {
+        DFSs: {
           'local:api/eac': {
-            Type: 'Local',
-            FileRoot: './api/eac/',
-            DefaultFile: 'index.ts',
-            Extensions: ['ts'],
-          } as EaCLocalDistributedFileSystem,
+            Details: {
+              Type: 'Local',
+              FileRoot: './api/eac/',
+              DefaultFile: 'index.ts',
+              Extensions: ['ts'],
+            } as EaCLocalDistributedFileSystemDetails,
+          },
         },
         Modifiers: {
           jwtValidate: {
@@ -114,7 +116,8 @@ export default class EaCAPIPlugin implements EaCRuntimePlugin {
             Details: {
               Type: 'DenoKV',
               Name: 'EaC DenoKV',
-              Description: 'The Deno KV database to use for storing EaC information',
+              Description:
+                'The Deno KV database to use for storing EaC information',
               DenoKVPath: Deno.env.get('EAC_DENO_KV_PATH') || undefined,
             } as EaCDenoKVDatabaseDetails,
           },
@@ -122,7 +125,8 @@ export default class EaCAPIPlugin implements EaCRuntimePlugin {
             Details: {
               Type: 'DenoKV',
               Name: 'EaC Commit DenoKV',
-              Description: 'The Deno KV database to use for the commit processing of an EaC',
+              Description:
+                'The Deno KV database to use for the commit processing of an EaC',
               DenoKVPath: Deno.env.get('EAC_COMMIT_DENO_KV_PATH') || undefined,
             } as EaCDenoKVDatabaseDetails,
           },
@@ -132,7 +136,7 @@ export default class EaCAPIPlugin implements EaCRuntimePlugin {
 
     pluginConfig.IoC!.Register(
       EaCAPILoggingProvider,
-      () => new EaCAPILoggingProvider(),
+      () => new EaCAPILoggingProvider()
     );
 
     return Promise.resolve(pluginConfig);
