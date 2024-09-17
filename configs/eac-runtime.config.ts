@@ -134,10 +134,14 @@ async function initializePrimaryEaC(rt: EaCRuntime): Promise<void> {
       1000 * 60 * 60 * 24 * 365 * 5,
     );
 
-    logger.Package.debug(
-      'The main JWT to use for connecting with EaC Core:',
-      mainJwt,
+    console.log(
+      `The main JWT to use for connecting with EaC Core:\n
+      ${mainJwt}`,
     );
+    // logger.Package.debug(
+    //   'The main JWT to use for connecting with EaC Core:',
+    //   mainJwt,
+    // );
 
     const userRecords = usernames.map((username) => {
       return {

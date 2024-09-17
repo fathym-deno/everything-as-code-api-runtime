@@ -31,7 +31,6 @@
     "preact": "npm:preact@10.20.1",
     "preact/jsx-runtime": "npm:preact@10.20.1/jsx-runtime",
     "preact-render-to-string": "npm:preact-render-to-string@6.4.1",
-    "preact/": "https://esm.sh/preact@10.20.1/",
     "@std/async/delay": "jsr:@std/async@1/delay",
     "@std/dotenv": "jsr:@std/dotenv@0",
     "@std/encoding/base64": "jsr:@std/encoding@1/base64",
