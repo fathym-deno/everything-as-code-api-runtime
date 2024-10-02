@@ -15,6 +15,13 @@ export default {
 
     const eacKv = await ctx.Runtime.IoC.Resolve<Deno.Kv>(Deno.Kv, 'eac');
 
+    console.log('username');
+    console.log(username);
+    console.log();
+    console.log('parentEntLookup');
+    console.log(parentEntLookup);
+    console.log();
+
     const userEaCResults = await eacKv.list<UserEaCRecord>({
       prefix: ['User', username, 'EaC'],
     });
@@ -23,6 +30,9 @@ export default {
 
     try {
       for await (const userEaCRecord of userEaCResults) {
+        console.log('userEaCRecord');
+        console.log(userEaCRecord);
+        console.log();
         if (
           !parentEntLookup ||
           userEaCRecord.value.ParentEnterpriseLookup === parentEntLookup
