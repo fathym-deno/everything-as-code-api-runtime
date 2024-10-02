@@ -17,11 +17,12 @@ export class EaCAPILoggingProvider extends LoggingProvider {
       '@fathym/common/path',
       '@fathym/eac',
       '@fathym/eac-api/client',
+      '@fathym/eac-api/status',
       '@fathym/eac-runtime',
       '@fathym/atomic-icons',
     ];
 
-    super({
+    super(import.meta, {
       handlers: {
         console: new ConsoleHandler('DEBUG'),
       },
