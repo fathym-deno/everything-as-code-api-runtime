@@ -12,6 +12,7 @@ export class EaCAPILoggingProvider extends LoggingProvider {
 
   constructor() {
     const loggingPackages = [
+      '@fathym/default',
       '@fathym/common/build',
       '@fathym/common/deno-kv',
       '@fathym/common/path',
