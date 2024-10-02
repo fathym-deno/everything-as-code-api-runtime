@@ -19,7 +19,7 @@ import {
 import { Logger } from '@std/log';
 import Handlebars from 'npm:handlebars/dist/handlebars.min.js';
 import { Buffer } from 'node:buffer';
-import sodium from 'https://deno.land/x/sodium@0.2.0/basic.ts';
+import sodium from 'jsr:@hugoalh/github-sodium@5.0.3';
 
 export async function ensureSource(
   providerDetails: EaCGitHubAppProviderDetails,
@@ -219,13 +219,11 @@ export async function ensureSourceSecrets(
         repo: sourceDetails.Repository!,
       });
 
-      const messageBytes = Buffer.from(secreted.Value);
+      // const messageBytes = Buffer.from(secreted.Value);
 
-      const keyBytes = Buffer.from(publicKey.data.key, 'base64');
+      // const keyBytes = Buffer.from(publicKey.data.key, 'base64');
 
-      await sodium.ready;
-
-      const encryptedBytes = sodium.crypto_box_seal(messageBytes, keyBytes);
+      const encryptedBytes = sodium.seal(publicKey.data.key, secreted.Value);
 
       const encValue = Buffer.from(encryptedBytes).toString('base64');
 
