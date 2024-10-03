@@ -26,7 +26,7 @@
     "@fathym/common": "jsr:@fathym/common@0.2.160",
     "@fathym/eac": "jsr:@fathym/eac@0.1.70",
     "@fathym/eac-api": "jsr:@fathym/eac-api@0.1.22",
-    "@fathym/eac-runtime": "jsr:@fathym/eac-runtime@0.1.40",
+    "@fathym/eac-runtime": "jsr:@fathym/eac-runtime@0.1.44",
     "@fathym/ioc": "jsr:@fathym/ioc@0.0.12",
     "preact": "npm:preact@10.20.1",
     "preact/jsx-runtime": "npm:preact@10.20.1/jsx-runtime",
