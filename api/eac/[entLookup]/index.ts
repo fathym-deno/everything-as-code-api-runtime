@@ -26,6 +26,9 @@ export default {
       entLookup,
     ]);
 
+    console.log('---------------------------EaC-------------------------------')
+    console.log(eac.value);
+
     return Response.json(eac.value);
   },
 
