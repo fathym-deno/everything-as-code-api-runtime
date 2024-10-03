@@ -6,7 +6,7 @@ import { EaCHandlerResponse } from '../../../../src/reqres/EaCHandlerResponse.ts
 import { EaCHandlerRequest } from '../../../../src/reqres/EaCHandlerRequest.ts';
 import { EaCAPIUserState } from '../../../../src/state/EaCAPIUserState.ts';
 import { ensureIoTDevices } from '../../../../src/eac/iot.helpers.ts';
-import { EaCAPILoggingProvider } from '../../../../src/plugins/EaCAPILoggingProvider.ts';
+import { EaCAPILoggingProvider } from '../../../../src/logging/EaCAPILoggingProvider.ts';
 
 export default {
   async POST(req, ctx: EaCRuntimeContext<EaCAPIUserState>) {

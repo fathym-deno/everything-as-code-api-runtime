@@ -4,7 +4,7 @@ import { EaCRuntimeContext, EaCRuntimeHandlers } from '@fathym/eac-runtime';
 import { FileReadResponse } from 'npm:@azure/storage-file-datalake';
 import { parse as json2csv } from 'npm:json2csv';
 import { EaCAPIUserState } from '../../../../../../../../../src/state/EaCAPIUserState.ts';
-import { EaCAPILoggingProvider } from '../../../../../../../../../src/plugins/EaCAPILoggingProvider.ts';
+import { EaCAPILoggingProvider } from '../../../../../../../../../src/logging/EaCAPILoggingProvider.ts';
 
 export const flattenJson = (function (isArray, wrapped) {
   return function (table: any) {

@@ -11,7 +11,7 @@ import {
 import { EaCRuntimeContext, EaCRuntimeHandlers } from '@fathym/eac-runtime';
 import { eacExists } from '../../src/utils/eac/helpers.ts';
 import { EaCAPIState } from '../../src/state/EaCAPIState.ts';
-import { EaCAPILoggingProvider } from '../../src/plugins/EaCAPILoggingProvider.ts';
+import { EaCAPILoggingProvider } from '../../src/logging/EaCAPILoggingProvider.ts';
 
 export default {
   async POST(req, ctx: EaCRuntimeContext<EaCAPIState>) {

@@ -22,7 +22,7 @@ import {
 } from '../../../../src/eac/sources.helpers.ts';
 import { EaCHandlerResponse } from '../../../../src/reqres/EaCHandlerResponse.ts';
 import { EaCHandlerErrorResponse } from '../../../../src/reqres/EaCHandlerErrorResponse.ts';
-import { EaCAPILoggingProvider } from '../../../../src/plugins/EaCAPILoggingProvider.ts';
+import { EaCAPILoggingProvider } from '../../../../src/logging/EaCAPILoggingProvider.ts';
 
 export default {
   async POST(req, ctx: EaCRuntimeContext<EaCAPIUserState>) {

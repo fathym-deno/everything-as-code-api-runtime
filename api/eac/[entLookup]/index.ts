@@ -12,7 +12,7 @@ import { EaCRuntimeContext, EaCRuntimeHandlers } from '@fathym/eac-runtime';
 import { EaCAPIUserState } from '../../../src/state/EaCAPIUserState.ts';
 import { EaCDeleteRequest } from '../../../src/reqres/EaCDeleteRequest.ts';
 import { eacExists } from '../../../src/utils/eac/helpers.ts';
-import { EaCAPILoggingProvider } from '../../../src/plugins/EaCAPILoggingProvider.ts';
+import { EaCAPILoggingProvider } from '../../../src/logging/EaCAPILoggingProvider.ts';
 
 export default {
   async GET(req, ctx: EaCRuntimeContext<EaCAPIUserState>) {

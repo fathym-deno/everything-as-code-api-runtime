@@ -8,7 +8,7 @@ import { Stripe } from 'npm:stripe';
 import { EaCAPIUserState } from '../../../../../src/state/EaCAPIUserState.ts';
 import { STATUS_CODE } from '@std/http/status';
 import { eacGetSecrets, loadMainSecretClient } from '@fathym/eac/utils/azure';
-import { EaCAPILoggingProvider } from '../../../../../src/plugins/EaCAPILoggingProvider.ts';
+import { EaCAPILoggingProvider } from '../../../../../src/logging/EaCAPILoggingProvider.ts';
 
 export default {
   async GET(req, ctx) {

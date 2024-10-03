@@ -5,7 +5,7 @@ import { EaCAPIUserState } from '../../../../src/state/EaCAPIUserState.ts';
 import { EaCHandlerConnectionsRequest } from '../../../../src/reqres/EaCHandlerConnectionsRequest.ts';
 import { EaCHandlerConnectionsResponse } from '../../../../src/reqres/EaCHandlerConnectionsResponse.ts';
 import { loadCloudResourceGroupsConnections } from '../../../../src/eac/clouds.helpers.ts';
-import { EaCAPILoggingProvider } from '../../../../src/plugins/EaCAPILoggingProvider.ts';
+import { EaCAPILoggingProvider } from '../../../../src/logging/EaCAPILoggingProvider.ts';
 
 export default {
   async POST(req, ctx: EaCRuntimeContext<EaCAPIUserState>) {

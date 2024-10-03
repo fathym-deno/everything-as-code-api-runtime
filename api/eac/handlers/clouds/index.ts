@@ -18,7 +18,7 @@ import {
   ensureRoleAssignments,
   finalizeCloudDetails,
 } from '../../../../src/eac/clouds.helpers.ts';
-import { EaCAPILoggingProvider } from '../../../../src/plugins/EaCAPILoggingProvider.ts';
+import { EaCAPILoggingProvider } from '../../../../src/logging/EaCAPILoggingProvider.ts';
 
 export default {
   async POST(req, ctx: EaCRuntimeContext<EaCAPIUserState>) {

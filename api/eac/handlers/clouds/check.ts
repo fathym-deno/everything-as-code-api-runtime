@@ -11,7 +11,7 @@ import {
 } from '../../../../src/eac/clouds.helpers.ts';
 import { EaCHandlerCheckResponse } from '../../../../src/reqres/EaCHandlerCheckResponse.ts';
 import { loadAzureCloudCredentials } from '@fathym/eac/utils/azure';
-import { EaCAPILoggingProvider } from '../../../../src/plugins/EaCAPILoggingProvider.ts';
+import { EaCAPILoggingProvider } from '../../../../src/logging/EaCAPILoggingProvider.ts';
 
 export default {
   async POST(req, ctx: EaCRuntimeContext<EaCAPIUserState>) {

@@ -7,7 +7,7 @@ import { EaCServiceDefinitions } from '@fathym/eac-api';
 import { EaCRuntimeContext, EaCRuntimeHandlers } from '@fathym/eac-runtime';
 import { Provider, ResourceManagementClient } from 'npm:@azure/arm-resources';
 import { EaCAPIUserState } from '../../../../../../src/state/EaCAPIUserState.ts';
-import { EaCAPILoggingProvider } from '../../../../../../src/plugins/EaCAPILoggingProvider.ts';
+import { EaCAPILoggingProvider } from '../../../../../../src/logging/EaCAPILoggingProvider.ts';
 
 export default {
   async POST(req, ctx: EaCRuntimeContext<EaCAPIUserState>) {
