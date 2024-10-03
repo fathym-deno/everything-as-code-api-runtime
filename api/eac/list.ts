@@ -5,7 +5,7 @@ import { EaCAPILoggingProvider } from '../../src/logging/EaCAPILoggingProvider.t
 
 export default {
   async GET(req, ctx: EaCRuntimeContext<EaCAPIState>) {
-    const logger = await ctx.Runtime.IoC.Resolve(EaCAPILoggingProvider);
+    const logger = ctx.Runtime.Logs;
 
     const username = ctx.State.Username!;
 

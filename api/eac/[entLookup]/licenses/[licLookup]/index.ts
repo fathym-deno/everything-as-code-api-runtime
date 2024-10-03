@@ -95,7 +95,7 @@ export default {
   },
 
   async POST(req, ctx) {
-    const logger = await ctx.Runtime.IoC.Resolve(EaCAPILoggingProvider);
+    const logger = ctx.Runtime.Logs;
 
     const entLookup = ctx.State.UserEaC!.EnterpriseLookup;
 

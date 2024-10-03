@@ -15,7 +15,7 @@ import { EaCAPILoggingProvider } from '../../src/logging/EaCAPILoggingProvider.t
 
 export default {
   async POST(req, ctx: EaCRuntimeContext<EaCAPIState>) {
-    const logger = await ctx.Runtime.IoC.Resolve(EaCAPILoggingProvider);
+    const logger = ctx.Runtime.Logs;
 
     const url = new URL(req.url);
 

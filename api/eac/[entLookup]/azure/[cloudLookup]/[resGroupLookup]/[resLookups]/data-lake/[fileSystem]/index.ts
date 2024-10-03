@@ -78,7 +78,7 @@ export const flattenJson = (function (isArray, wrapped) {
 
 export default {
   async GET(req, ctx: EaCRuntimeContext<EaCAPIUserState>) {
-    const logger = await ctx.Runtime.IoC.Resolve(EaCAPILoggingProvider);
+    const logger = ctx.Runtime.Logs;
 
     const entLookup = ctx.State.UserEaC!.EnterpriseLookup;
 

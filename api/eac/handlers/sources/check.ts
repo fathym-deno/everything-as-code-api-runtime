@@ -6,7 +6,7 @@ import { EaCAPILoggingProvider } from '../../../../src/logging/EaCAPILoggingProv
 
 export default {
   async POST(req, ctx: EaCRuntimeContext<EaCAPIUserState>) {
-    const logger = await ctx.Runtime.IoC.Resolve(EaCAPILoggingProvider);
+    const logger = ctx.Runtime.Logs;
 
     const checkRequest: EaCHandlerCheckRequest = await req.json();
 
