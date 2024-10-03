@@ -3,9 +3,8 @@ import { EaCRuntimeContext, EaCRuntimeHandlers } from '@fathym/eac-runtime';
 import {
   TenantIdDescription,
   SubscriptionClient,
-} from 'npm:@azure/arm-subscriptions';
+} from 'npm:@azure/arm-subscriptions@5.1.0';
 import { EaCAPIUserState } from '../../../../../src/state/EaCAPIUserState.ts';
-import { AzureTenanatsRequest } from '@fathym/eac-api';
 
 export default {
   async GET(req, ctx: EaCRuntimeContext<EaCAPIUserState>) {
@@ -18,12 +17,18 @@ export default {
     const tenants: TenantIdDescription[] = [];
 
     if (creds) {
-      const subClient = new SubscriptionClient(creds);
+      try {
+        const subClient = new SubscriptionClient(creds);
+  
+        const tenantsList = subClient.tenants.list();
+  
+        for await (const tenant of tenantsList) {
+          tenants.push(tenant);
+        }
+      } catch(err) {
+        ctx.Runtime.Logs.Package.error('There was an error loading the tenant.', err);
 
-      const tenantsList = subClient.tenants.list();
-
-      for await (const tenant of tenantsList) {
-        tenants.push(tenant);
+        throw err;
       }
     }
 

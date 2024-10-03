@@ -277,7 +277,7 @@ function processDiffKey(
       `Preparing EaC commit ${commitReq.CommitID} to process key ${key}`
     );
 
-    const diff = eacDiff[key];
+    const diff = (eacDiff as Record<string, unknown>)[key];
 
     if (diff) {
       const handler = saveEaC.Handlers![key];
@@ -312,7 +312,7 @@ function processEaCHandler(
   handler: EaCModuleHandler,
   commitReq: EaCCommitRequest,
   key: string,
-  saveEaC: EverythingAsCode,
+  saveEaC: Record<string, unknown>,
   toProcess: { keys: string[] },
   allChecks: EaCHandlerCheckRequest[],
   errors: EaCHandlerErrorResponse[]
