@@ -11,9 +11,10 @@ import { DefaultEaCConfig, defineEaCConfig, EaCRuntime } from '@fathym/eac-runti
 import { delay } from '@std/async/delay';
 import EaCAPIPlugin from '../src/plugins/EaCAPIPlugin.ts';
 import { listenForCommits } from '../api/handlers/index.ts';
-import { EaCAPILoggingProvider } from '../src/plugins/EaCAPILoggingProvider.ts';
+import { EaCAPILoggingProvider } from '../src/logging/EaCAPILoggingProvider.ts';
 
 export const config = defineEaCConfig({
+  LoggingProvider: new EaCAPILoggingProvider(),
   Plugins: [new EaCAPIPlugin(), ...(DefaultEaCConfig.Plugins || [])],
   Server: {
     port: 6130,
@@ -27,9 +28,9 @@ export async function configure(rt: EaCRuntime): Promise<void> {
 }
 
 async function initializePrimaryEaC(rt: EaCRuntime): Promise<void> {
-  const logger = await rt.IoC.Resolve(EaCAPILoggingProvider);
+  const logger = (await config).LoggingProvider!.Package;
 
-  logger.Package.debug('Initializing primary EaC checks');
+  logger.debug('Initializing primary EaC checks');
 
   const eacKv = await rt.IoC.Resolve(Deno.Kv, 'eac');
 
@@ -48,7 +49,7 @@ async function initializePrimaryEaC(rt: EaCRuntime): Promise<void> {
   }
 
   if (!hasExistingEaCs) {
-    logger.Package.debug('Preparing core EaC record...');
+    logger.debug('Preparing core EaC record...');
 
     const commitKv = await rt.IoC.Resolve<Deno.Kv>(Deno.Kv, 'commit');
 
@@ -106,7 +107,7 @@ async function initializePrimaryEaC(rt: EaCRuntime): Promise<void> {
       eacKv,
     );
 
-    logger.Package.debug('Waiting for core EaC record...');
+    logger.debug('Waiting for core EaC record...');
 
     let eac: EverythingAsCode | null;
 
@@ -122,7 +123,7 @@ async function initializePrimaryEaC(rt: EaCRuntime): Promise<void> {
       ).value;
     } while (!eac);
 
-    logger.Package.debug(
+    logger.debug(
       `Core EaC record has been created: ${createStatus.EnterpriseLookup}`,
     );
 
@@ -165,6 +166,6 @@ async function initializePrimaryEaC(rt: EaCRuntime): Promise<void> {
 
     await usersSetupOp.commit();
   } else {
-    logger.Package.debug('There are existing EaC Records');
+    logger.debug('There are existing EaC Records');
   }
 }

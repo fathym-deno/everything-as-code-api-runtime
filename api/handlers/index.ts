@@ -5,7 +5,7 @@ import { isEaCDeleteRequest } from '../../src/reqres/EaCDeleteRequest.ts';
 import { handleEaCCommitCheckRequest } from './commit-check.handler.ts';
 import { handleEaCDeleteRequest } from './delete.handler.ts';
 import { handleEaCCommitRequest } from './commit.handler.ts';
-import { EaCAPILoggingProvider } from '../../src/plugins/EaCAPILoggingProvider.ts';
+import { LoggingProvider } from '@fathym/common/log';
 
 export const listenForCommits = async (rt: EaCRuntime) => {
   if (!IS_BUILDING) {
@@ -17,7 +17,7 @@ export const listenForCommits = async (rt: EaCRuntime) => {
      * This listener set is responsible for the core EaC actions.
      */
     commitKv.listenQueue(async (msg: unknown) => {
-      const logger = await rt.IoC.Resolve(EaCAPILoggingProvider);
+      const logger = await rt.IoC.Resolve(LoggingProvider);
 
       const trackingKey = ['Handlers', 'Commits', 'Processing'];
 
