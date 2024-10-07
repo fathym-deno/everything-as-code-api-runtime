@@ -8,7 +8,7 @@
       "program": "${workspaceFolder}/main.ts",
       "cwd": "${workspaceFolder}",
       "runtimeExecutable": "deno.exe",
-      "runtimeArgs": ["run", "--config", "./deno.jsonc", "--inspect-wait"]
+      "runtimeArgs": ["run", "--reload", "--config", "./deno.jsonc", "--inspect-wait"]
     },
     {
       "request": "launch",
