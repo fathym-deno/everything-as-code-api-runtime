@@ -17,23 +17,33 @@ export default {
     const billingAccounts: BillingAccount[] = [];
 
     if (creds) {
-      const subscriptionId = '00000000-0000-0000-0000-000000000000';
+      try {
+        const subscriptionId = '00000000-0000-0000-0000-000000000000';
 
-      const billingClient = new BillingManagementClient(creds, subscriptionId);
+        const billingClient = new BillingManagementClient(
+          creds,
+          subscriptionId
+        );
 
-      const expandProps = [
-        'billingProfiles',
-        'billingProfiles/invoiceSections',
-        'customers',
-        'enrollmentAccounts',
-      ];
+        const expandProps = [
+          'billingProfiles',
+          'billingProfiles/invoiceSections',
+          'customers',
+          'enrollmentAccounts',
+        ];
 
-      const billingAccountsList = await billingClient.billingAccounts.list({
-        expand: expandProps.join(','),
-      });
+        const billingAccountsList = billingClient.billingAccounts.list({
+          expand: expandProps.join(','),
+        });
 
-      for await (const billingAccount of billingAccountsList) {
-        billingAccounts.push(billingAccount);
+        for await (const billingAccount of billingAccountsList) {
+          billingAccounts.push(billingAccount);
+        }
+      } catch (err) {
+        ctx.Runtime.Logs.Package.error(
+          'There was an error loading the billing accounts.',
+          err
+        );
       }
     }
 
