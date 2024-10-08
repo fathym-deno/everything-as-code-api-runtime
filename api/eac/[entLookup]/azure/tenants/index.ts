@@ -3,7 +3,7 @@ import { EaCRuntimeContext, EaCRuntimeHandlers } from '@fathym/eac-runtime';
 import {
   TenantIdDescription,
   SubscriptionClient,
-} from 'npm:@azure/arm-subscriptions@5.1.0';
+} from '@azure/arm-subscriptions';
 import { EaCAPIUserState } from '../../../../../src/state/EaCAPIUserState.ts';
 
 export default {

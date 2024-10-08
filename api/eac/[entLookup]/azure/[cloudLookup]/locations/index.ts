@@ -6,7 +6,7 @@ import { EaCServiceDefinitions } from '@fathym/eac-api';
 import { loadAzureCloudCredentials } from '@fathym/eac/utils/azure';
 import { EaCRuntimeContext, EaCRuntimeHandlers } from '@fathym/eac-runtime';
 import { ResourceManagementClient } from 'npm:@azure/arm-resources';
-import { Location, SubscriptionClient } from 'npm:@azure/arm-subscriptions';
+import { Location, SubscriptionClient } from '@azure/arm-subscriptions';
 import { EaCAPIUserState } from '../../../../../../src/state/EaCAPIUserState.ts';
 
 export default {
@@ -34,12 +34,14 @@ export default {
     if (creds) {
       const details = eac.Clouds![cloudLookup!].Details as EaCCloudAzureDetails;
 
+      const svcDefLocations: string[] = [];
+
       const resClient = new ResourceManagementClient(
         creds,
         details.SubscriptionID
       );
 
-      const svcDefLocationCalls = Object.keys(svcDefs).map(async (sd) => {
+      for (const sd of Object.keys(svcDefs)) {
         const svcDef = svcDefs[sd];
 
         const provider = await resClient.providers.get(sd);
@@ -50,10 +52,8 @@ export default {
           })
           .map((rt) => rt.locations!)!;
 
-        return Array.from(new Set(...providerTypeLocations));
-      });
-
-      const svcDefLocations = await Promise.all<string[]>(svcDefLocationCalls);
+        svcDefLocations.push(new Set(...providerTypeLocations));
+      }
 
       const locationNames = Array.from(new Set(...svcDefLocations));
 

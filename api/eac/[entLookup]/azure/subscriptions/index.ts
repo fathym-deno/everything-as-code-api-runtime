@@ -1,6 +1,6 @@
 import { loadAzureCredentialsForToken } from '@fathym/eac/utils/azure';
 import { EaCRuntimeContext, EaCRuntimeHandlers } from '@fathym/eac-runtime';
-import { Subscription, SubscriptionClient } from 'npm:@azure/arm-subscriptions';
+import { Subscription, SubscriptionClient } from '@azure/arm-subscriptions';
 import { EaCAPIUserState } from '../../../../../src/state/EaCAPIUserState.ts';
 
 export default {
