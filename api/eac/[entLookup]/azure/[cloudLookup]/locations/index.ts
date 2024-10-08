@@ -34,12 +34,14 @@ export default {
     if (creds) {
       const details = eac.Clouds![cloudLookup!].Details as EaCCloudAzureDetails;
 
+      const svcDefLocations: string[] = [];
+
       const resClient = new ResourceManagementClient(
         creds,
         details.SubscriptionID
       );
 
-      const svcDefLocationCalls = Object.keys(svcDefs).map(async (sd) => {
+      for (const sd of Object.keys(svcDefs)) {
         const svcDef = svcDefs[sd];
 
         const provider = await resClient.providers.get(sd);
@@ -50,10 +52,8 @@ export default {
           })
           .map((rt) => rt.locations!)!;
 
-        return Array.from(new Set(...providerTypeLocations));
-      });
-
-      const svcDefLocations = await Promise.all<string[]>(svcDefLocationCalls);
+        svcDefLocations.push(new Set(...providerTypeLocations));
+      }
 
       const locationNames = Array.from(new Set(...svcDefLocations));
 
