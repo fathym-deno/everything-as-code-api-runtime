@@ -14,24 +14,37 @@ export default {
 
     const creds = await loadAzureCredentialsForToken(azureAccessToken);
 
-    const tenants: TenantIdDescription[] = [];
+    const tenantCheck = new Promise((resolve, reject) => {
+      const work = async () => {
+        const tenants: TenantIdDescription[] = [];
 
-    if (creds) {
-      try {
-        const subClient = new SubscriptionClient(creds);
-  
-        const tenantsList = subClient.tenants.list();
-  
-        for await (const tenant of tenantsList) {
-          tenants.push(tenant);
+        if (creds) {
+          try {
+            const subClient = new SubscriptionClient(creds);
+
+            const tenantsList = subClient.tenants.list();
+
+            for await (const tenant of tenantsList) {
+              tenants.push(tenant);
+            }
+
+            resolve(tenants);
+          } catch (err) {
+            ctx.Runtime.Logs.Package.error(
+              'There was an error loading the tenant.',
+              err
+            );
+
+            reject(err);
+          }
+        } else {
+          resolve(tenants);
         }
-      } catch(err) {
-        ctx.Runtime.Logs.Package.error('There was an error loading the tenant.', err);
+      };
 
-        throw err;
-      }
-    }
+      work();
+    });
 
-    return Response.json(tenants);
+    return Response.json(await tenantCheck);
   },
 } as EaCRuntimeHandlers;
