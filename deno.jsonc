@@ -21,6 +21,7 @@
   },
   "lock": false,
   "imports": {
+    "@azure/arm-subscriptions": "npm:@azure/arm-subscriptions@5.1.0",
     "@azure/core-util": "npm:@azure/core-util",
     "@djwt": "jsr:@zaubrik/djwt@3.0.2",
     "@fathym/common": "jsr:@fathym/common@0.2.160",

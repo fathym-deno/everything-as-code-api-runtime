@@ -6,7 +6,7 @@ import { EaCServiceDefinitions } from '@fathym/eac-api';
 import { loadAzureCloudCredentials } from '@fathym/eac/utils/azure';
 import { EaCRuntimeContext, EaCRuntimeHandlers } from '@fathym/eac-runtime';
 import { ResourceManagementClient } from 'npm:@azure/arm-resources';
-import { Location, SubscriptionClient } from 'npm:@azure/arm-subscriptions';
+import { Location, SubscriptionClient } from '@azure/arm-subscriptions';
 import { EaCAPIUserState } from '../../../../../../src/state/EaCAPIUserState.ts';
 
 export default {

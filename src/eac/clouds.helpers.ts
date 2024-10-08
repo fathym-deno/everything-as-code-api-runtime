@@ -25,7 +25,7 @@ import {
   GenericResourceExpanded,
   ResourceManagementClient,
 } from 'npm:@azure/arm-resources';
-import { SubscriptionClient } from 'npm:@azure/arm-subscriptions';
+import { SubscriptionClient } from '@azure/arm-subscriptions';
 import { AccessToken } from 'npm:@azure/identity';
 import {
   AuthenticationProvider,
